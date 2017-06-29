@@ -7,7 +7,9 @@ public class WheelManager : MonoBehaviour {
 
     public WheelCollider wheelCollider;
     public GameObject wheelMesh;
+    public bool steerable;
     public int speed;
+    private float accelValue;
 
 	void Start ()
     {
@@ -16,23 +18,43 @@ public class WheelManager : MonoBehaviour {
 
     private void Update()
     {
-        wheelMesh.transform.position = wheelCollider.transform.position;
-        wheelMesh.transform.rotation = wheelCollider.transform.rotation;
+        UpdateMeshePosition();
+        if (accelValue != 0)
+        {
+            accelValue = 0;
+            Accelerate();
+        }
+    }
+
+    private void UpdateMeshePosition()
+    {
+        Quaternion rot;
+        Vector3 pos;
+        wheelCollider.GetWorldPose(out pos, out rot);
+        wheelMesh.transform.position = pos;
+        wheelMesh.transform.rotation = rot;
     }
 
     private void Instance_keyPress(KeyPress obj)
     {
 
         if (obj.button == ControllerConfig.RIGHTTRIGGER)
-            Accelerate(obj.value);
-        if (obj.button == ControllerConfig.LEFTSTICK)
+        {
+            accelValue = obj.value;
+            Accelerate();
+        }
+        else if (obj.button == ControllerConfig.LEFTTRIGGER)
+        {
+            accelValue = -obj.value;
+            Accelerate();
+        }
+        if (obj.button == ControllerConfig.LEFTSTICKX && steerable)
             Steer(obj.value);
     }
 
-    private void Accelerate(float value)
+    private void Accelerate()
     {
-        Debug.Log("Accel");
-        wheelCollider.motorTorque = value * speed;
+        wheelCollider.motorTorque = accelValue * speed;
     }
 
     private void Steer(float value)

@@ -286,8 +286,8 @@ public class InputHandler : Singleton<InputHandler>
 
 
         //triggers
-        leftTrigger = controllerInput.GetAxisLeftTrigger();
-        rightTrigger = controllerInput.GetAxisRightTrigger();
+        leftTrigger = Input.GetAxis("LeftTrigger");
+        rightTrigger = Input.GetAxis("RightTrigger");
 
         if (CheckAxis(leftTrigger))
             keyPress(new KeyPress(ControllerConfig.LEFTTRIGGER, leftTrigger));

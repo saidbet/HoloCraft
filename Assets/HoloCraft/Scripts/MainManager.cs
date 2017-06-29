@@ -44,7 +44,6 @@ public class MainManager : Singleton<MainManager>
 
     public Material validMat;
     public Material invalidMat;
-    public Shader highlight;
 
     public GameObject[,,] workspaceArray;
 
@@ -89,7 +88,7 @@ public class MainManager : Singleton<MainManager>
 
     private IEnumerator SpawnWorkspace()
     {
-        int timer = 50;
+        int timer = 20;
 
         do
         {
