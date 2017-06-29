@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Walls
+  - Button
+  - Floors
+  - Model
+  - Bundle
+  - SyncMessage
+  - Furniture
+  - Veranda
+  - PreviewInfos
+  - expertIcons
+  - SnapPoint
+  - WorkspaceController
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Walls
+  - SnapPoints
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - PhysicsLayer
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
