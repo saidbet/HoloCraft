@@ -7,13 +7,20 @@ public class WheelManager : MonoBehaviour {
 
     public WheelCollider wheelCollider;
     public GameObject wheelMesh;
-    public bool steerable;
     public int speed;
     private float accelValue;
 
-	void Start ()
+    //Configurable options
+    public bool steerable;
+    public bool oppositeDirection;
+
+    void Start ()
     {
         InputHandler.Instance.keyPress += Instance_keyPress;
+        if(oppositeDirection == true)
+        {
+            speed = -speed;
+        }
     }
 
     private void Update()
