@@ -66,7 +66,6 @@ public class MainManager : Singleton<MainManager>
 
         set
         {
-
             if (value == true)
                 SetMaterialColor(Color.green);
             else
@@ -81,7 +80,7 @@ public class MainManager : Singleton<MainManager>
         StartCoroutine(SpawnWorkspace());
         workspaceArray = new GameObject[height, width, depth];
         previousPos = new Vector3(height / 2, width / 2, depth / 2);
-
+        previousRot = Quaternion.identity;
         InputHandler.Instance.keyPress += Instance_keyPress;
 
     }
@@ -150,6 +149,11 @@ public class MainManager : Singleton<MainManager>
     private void StartPlacing()
     {
         workspace = workspace.transform.Find("WorkspaceController").gameObject;
+        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace);
+        currentObject.transform.localPosition = previousPos;
+        PutInArray();
+        currentObject.GetComponent<BuildBlock>().DisableSnapPoints();
+        currentObject = null;
         mode = Mode.Building;
         nbrPlaced = 0;
         PlaceNext();
@@ -163,12 +167,11 @@ public class MainManager : Singleton<MainManager>
         }
 
         currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace);
-        currentObject.transform.localScale = new Vector3(1.05f, 1.05f, 1.05f);
+        currentObject.transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
         currentObject.transform.localPosition = previousPos;
         currentObject.transform.localRotation = previousRot;
         GetCurrentMats();
         GetCurrentColors();
-
         CheckValid();
     }
 
@@ -325,11 +328,7 @@ public class MainManager : Singleton<MainManager>
 
     private void CheckValid()
     {
-        if (nbrPlaced == 0)
-            IsValid = true;
-        else
-            IsValid = false;
-
+        IsValid = false;
         isOccupied = GetGameObject();
     }
 

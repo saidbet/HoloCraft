@@ -277,10 +277,8 @@ public class NetworkSpawnManager : SpawnManager<SyncSpawnedObject>
             transformSynchronizer.TransformDataModel = dataModel.Transform;
             transformSynchronizer.isEnabled = dataModel.isEnabled;
         }
-        Debug.Log("synchro to add: " + dataModel.synchronizerToAdd.Value);
         if (Type.GetType(dataModel.synchronizerToAdd.Value) != null)
         {
-            Debug.Log("adding synchro");
             Synchronizer synchro = instance.AddComponent(Type.GetType(dataModel.synchronizerToAdd.Value)) as Synchronizer;
             synchro.LinkData(dataModel);
         }

@@ -8,6 +8,7 @@ public class SnapPoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider collider)
     {
+        Debug.Log("Trigger enter" + collider.gameObject.name);
         if (collider.transform.tag == "SnapPoint")
         {
             Debug.Log("colliding with" + collider.transform.name);
