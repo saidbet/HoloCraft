@@ -9,6 +9,7 @@ public class WheelManager : MonoBehaviour {
     public GameObject wheelMesh;
     public int speed;
     private float accelValue;
+    private float steerValue;
 
     //Configurable options
     public bool steerable;
@@ -27,6 +28,12 @@ public class WheelManager : MonoBehaviour {
     {
         UpdateMeshePosition();
         if (accelValue != 0)
+        {
+            accelValue = 0;
+            Accelerate();
+        }
+
+        if(steerValue != 0)
         {
             accelValue = 0;
             Accelerate();
@@ -56,7 +63,10 @@ public class WheelManager : MonoBehaviour {
             Accelerate();
         }
         if (obj.button == ControllerConfig.LEFTSTICKX && steerable)
-            Steer(obj.value);
+        {
+            steerValue = obj.value;
+            Steer();
+        }
     }
 
     private void Accelerate()
@@ -64,8 +74,8 @@ public class WheelManager : MonoBehaviour {
         wheelCollider.motorTorque = accelValue * speed;
     }
 
-    private void Steer(float value)
+    private void Steer()
     {
-        wheelCollider.steerAngle = value * 45;
+        wheelCollider.steerAngle = steerValue * 45;
     }
 }
