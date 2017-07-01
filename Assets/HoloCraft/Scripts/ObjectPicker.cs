@@ -4,13 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-[System.Serializable]
-public struct Block
-{
-    public GameObject blockPrefab;
-    public Button button;
-    public Sprite blockImage;
-}
+//[System.Serializable]
+//public struct Block
+//{
+//    public GameObject blockPrefab;
+//    public Button button;
+//    public Sprite blockImage;
+//}
 
 public class ObjectPicker : MonoBehaviour
 {
