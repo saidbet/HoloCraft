@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88c7d38fae0df42489d9e514899902d6, type: 3}
+  m_Name: Triangle
+  m_EditorClassIdentifier: 
+  blockName: Triangle
+  prefab: {fileID: 1626418000006376, guid: 331deff840109834bbfa07684e115ca9, type: 2}
+  thumbnail: {fileID: 21300000, guid: a4868c065db873b4393e47b33956fab2, type: 3}
+  boolProperties: []
+  floatProperties: []

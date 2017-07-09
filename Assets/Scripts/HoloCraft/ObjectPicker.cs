@@ -4,28 +4,23 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-//[System.Serializable]
-//public struct Block
-//{
-//    public GameObject blockPrefab;
-//    public Button button;
-//    public Sprite blockImage;
-//}
-
 public class ObjectPicker : MonoBehaviour
 {
-    public Block[] blocks;
-    private int currentButton;
-    public GameObject highlight;
+    public BlocksArray blocksArray;
+    public Button[] buttons;
+    private int currentIndex;
+    public HighlightManager highlight;
 
     private void Start()
     {
-        currentButton = 0;
-        SetHighlight(blocks[currentButton].button.gameObject);
-        foreach(var part in blocks)
+        currentIndex = 0;
+        highlight.SetHighlight(buttons[currentIndex].gameObject);
+
+        for(int i = 0; i < blocksArray.array.Length; i++)
         {
-            part.button.GetComponent<Image>().sprite = part.blockImage;
+            buttons[i].image.sprite = blocksArray.array[i].thumbnail;
         }
+
         InputHandler.Instance.keyPress += Instance_keyPress;
     }
 
@@ -42,54 +37,50 @@ public class ObjectPicker : MonoBehaviour
         if (obj.button == ControllerConfig.RIGHT)
             GetNewPos(MainManager.Direction.Right);
         if (obj.button == ControllerConfig.A)
-            MainManager.Instance.ChangeObject(blocks[currentButton].blockPrefab);
-    }
-
-    private void SetHighlight(GameObject target)
-    {
-        highlight.transform.position = target.transform.position;
-        highlight.SetActive(true);
+        {
+            MainManager.Instance.ChangeObject(blocksArray.array[currentIndex].prefab);
+        }
     }
 
     public void GetNewPos(MainManager.Direction direction)
     {
         if(direction == MainManager.Direction.Right)
         {
-            if (currentButton == 11)
+            if (currentIndex == 11)
             {
-                currentButton = 0;
+                currentIndex = 0;
             }
             else
-                currentButton += 1;
+                currentIndex += 1;
         }
         else if(direction == MainManager.Direction.Left)
         {
-            if (currentButton == 0)
+            if (currentIndex == 0)
             {
-                currentButton = 11;
+                currentIndex = 11;
             }
             else
-                currentButton -= 1;
+                currentIndex -= 1;
         }
         else if(direction == MainManager.Direction.Up)
         {
-            if (currentButton < 3)
+            if (currentIndex < 3)
             {
-                currentButton = currentButton + 9;
+                currentIndex = currentIndex + 9;
             }
             else
-                currentButton -= 3;
+                currentIndex -= 3;
         }
         else if(direction == MainManager.Direction.Down)
         {
-            if (currentButton > 8)
+            if (currentIndex > 8)
             {
-                currentButton = currentButton - 9;
+                currentIndex = currentIndex - 9;
             }
             else
-                currentButton += 3;
+                currentIndex += 3;
         }
 
-        SetHighlight(blocks[currentButton].button.gameObject);
+        highlight.SetHighlight(buttons[currentIndex].gameObject);
     }
 }

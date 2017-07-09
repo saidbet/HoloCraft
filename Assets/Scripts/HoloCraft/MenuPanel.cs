@@ -7,13 +7,13 @@ using UnityEngine.UI;
 public class MenuPanel : MonoBehaviour
 {
     public Button[] menuItems;
-    public GameObject highlight;
+    public HighlightManager highlight;
     public int currentItem;
 
 	void Start ()
     {
         currentItem = 0;
-        SetHighlight(menuItems[currentItem].gameObject);
+        highlight.SetHighlight(menuItems[currentItem].gameObject);
 
         InputHandler.Instance.keyPress += Instance_keyPress;
     }
@@ -28,13 +28,6 @@ public class MenuPanel : MonoBehaviour
             GetNewPos(MainManager.Direction.Up);
         if (obj.button == ControllerConfig.A)
             menuItems[currentItem].onClick.Invoke();
-    }
-
-    private void SetHighlight(GameObject target)
-    {
-        highlight.transform.position = target.transform.position;
-        highlight.transform.localScale = target.transform.localScale;
-        highlight.SetActive(true);
     }
 
     private void GetNewPos(MainManager.Direction direction)
@@ -58,7 +51,7 @@ public class MenuPanel : MonoBehaviour
                 currentItem -= 1;
         }
 
-        SetHighlight(menuItems[currentItem].gameObject);
+        highlight.SetHighlight(menuItems[currentItem].gameObject);
     }
 
     public void MoveWorkspace()

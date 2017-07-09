@@ -34,9 +34,11 @@ public class MainManager : Singleton<MainManager>
         Z
     }
 
+    //size of the workspace
     public int height = 20;
     public int width = 20;
     public int depth = 20;
+
     private int nbrPlaced;
 
     public GameObject workspacePrefab;
@@ -50,14 +52,15 @@ public class MainManager : Singleton<MainManager>
     private bool isValid;
     private bool isOccupied;
 
+    //Info relative to current block to place
     public GameObject objectToPlace;
     private GameObject currentObject;
-    private List<Material> currentMats;
-    private Color[] currentColors;
 
+    //Previous block pos and rot
     private Vector3 previousPos;
     private Quaternion previousRot;
 
+    //Current mode
     public Mode mode;
 
     bool IsValid
@@ -67,9 +70,9 @@ public class MainManager : Singleton<MainManager>
         set
         {
             if (value == true)
-                SetMaterialColor(Color.green);
+                currentObject.GetComponent<Block>().SetMaterialColor(Color.green);
             else
-                SetMaterialColor(Color.red);
+                currentObject.GetComponent<Block>().SetMaterialColor(Color.red);
 
             isValid = value;
         }
@@ -82,7 +85,7 @@ public class MainManager : Singleton<MainManager>
         previousPos = new Vector3(height / 2, width / 2, depth / 2);
         previousRot = Quaternion.identity;
         InputHandler.Instance.keyPress += Instance_keyPress;
-
+        //objectToPlace = this.GetComponent<CreationsManager>().defaultBlock.prefab;
     }
 
     private IEnumerator SpawnWorkspace()
@@ -152,7 +155,7 @@ public class MainManager : Singleton<MainManager>
         currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace);
         currentObject.transform.localPosition = previousPos;
         PutInArray();
-        currentObject.GetComponent<BuildBlock>().DisableSnapPoints();
+        currentObject.GetComponent<Block>().DisableSnapPoints();
         currentObject = null;
         mode = Mode.Building;
         nbrPlaced = 0;
@@ -170,8 +173,6 @@ public class MainManager : Singleton<MainManager>
         currentObject.transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
         currentObject.transform.localPosition = previousPos;
         currentObject.transform.localRotation = previousRot;
-        GetCurrentMats();
-        GetCurrentColors();
         CheckValid();
     }
 
@@ -183,8 +184,8 @@ public class MainManager : Singleton<MainManager>
         previousRot = currentObject.transform.localRotation;
         currentObject.transform.localScale = Vector3.one;
         PutInArray();
-        SetDefaultColor();
-        currentObject.GetComponent<BuildBlock>().DisableSnapPoints();
+        currentObject.GetComponent<Block>().RestoreDefaultColor();
+        currentObject.GetComponent<Block>().DisableSnapPoints();
         currentObject = null;
         nbrPlaced += 1;
         PlaceNext();
@@ -337,45 +338,6 @@ public class MainManager : Singleton<MainManager>
         if (isOccupied == false && IsValid == false)
         {
             IsValid = true;
-        }
-    }
-
-    private void SetMaterialColor(Color color)
-    {
-        for (int i = 0; i < currentMats.Count; i++)
-        {
-            currentMats[i].SetColor("_Color", color);
-        }
-    }
-
-    private void SetDefaultColor()
-    {
-        for (int i = 0; i < currentMats.Count; i++)
-        {
-            currentMats[i].SetColor("_Color", currentColors[i]);
-        }
-    }
-
-    private void GetCurrentColors()
-    {
-        currentColors = new Color[currentMats.Count];
-        for (int i = 0; i < currentMats.Count; i++)
-        {
-            currentColors[i] = currentMats[i].GetColor("_Color");
-        }
-    }
-
-    private void GetCurrentMats()
-    {
-        currentMats = new List<Material>();
-        Renderer[] renderers = currentObject.GetComponentsInChildren<Renderer>();
-
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            foreach(Material mat in renderers[i].materials)
-            {
-                currentMats.Add(mat);
-            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HoloToolkit.Sharing.Spawning;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,13 @@ public class DataModelReference : MonoBehaviour
 
     private void OnDestroy()
     {
-        ShareManager.Instance.spawnManager.Delete(gameObject);
+        try
+        {
+            ShareManager.Instance.spawnManager.Delete(gameObject);
+        }
+        catch(NullReferenceException e)
+        {
+
+        }
     }
 }
