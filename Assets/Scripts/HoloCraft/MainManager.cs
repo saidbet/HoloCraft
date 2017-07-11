@@ -22,6 +22,7 @@ public class MainManager : Singleton<MainManager>
         Building,
         PickerMenu,
         WorkspaceMenu,
+        PropertiesMenu,
         Moving,
         Scaling,
         Playing
