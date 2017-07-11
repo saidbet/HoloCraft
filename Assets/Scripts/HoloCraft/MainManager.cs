@@ -34,27 +34,21 @@ public class MainManager : Singleton<MainManager>
         Z
     }
 
-    //size of the workspace
-    public int height = 20;
-    public int width = 20;
-    public int depth = 20;
-
-    private int nbrPlaced;
-
     public GameObject workspacePrefab;
     private GameObject workspace;
 
     public Material validMat;
     public Material invalidMat;
 
-    public GameObject[,,] workspaceArray;
-
     private bool isValid;
     private bool isOccupied;
 
     //Info relative to current block to place
     public GameObject objectToPlace;
-    private GameObject currentObject;
+    private Block currentObject;
+
+    //Reference to other scripts
+    public Creation creation;
 
     //Previous block pos and rot
     private Vector3 previousPos;
@@ -80,12 +74,11 @@ public class MainManager : Singleton<MainManager>
 
     private void Start()
     {
+        creation = GetComponent<Creation>();
         StartCoroutine(SpawnWorkspace());
-        workspaceArray = new GameObject[height, width, depth];
-        previousPos = new Vector3(height / 2, width / 2, depth / 2);
+        previousPos = new Vector3(creation.maxHeight / 2, creation.maxWidth / 2, creation.maxDepth / 2);
         previousRot = Quaternion.identity;
         InputHandler.Instance.keyPress += Instance_keyPress;
-        //objectToPlace = this.GetComponent<CreationsManager>().defaultBlock.prefab;
     }
 
     private IEnumerator SpawnWorkspace()
@@ -142,23 +135,25 @@ public class MainManager : Singleton<MainManager>
 
         if (obj.button == ControllerConfig.A)
         {
-            if (GetGameObject() == null)
+            if (creation.GetBlock(currentObject.position) == null)
                 Validate();
         }
         if (obj.button == ControllerConfig.B)
-            Remove();
+        {
+            creation.RemoveBlock(currentObject.transform.position);
+            PlaceNext();
+        }
     }
 
     private void StartPlacing()
     {
         workspace = workspace.transform.Find("WorkspaceController").gameObject;
-        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace);
+        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace).GetComponent<Block>();
         currentObject.transform.localPosition = previousPos;
-        PutInArray();
+        creation.AddToDict(currentObject);
         currentObject.GetComponent<Block>().DisableSnapPoints();
         currentObject = null;
         mode = Mode.Building;
-        nbrPlaced = 0;
         PlaceNext();
     }
 
@@ -169,7 +164,7 @@ public class MainManager : Singleton<MainManager>
             Destroy(currentObject);
         }
 
-        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace);
+        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace).GetComponent<Block>();
         currentObject.transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
         currentObject.transform.localPosition = previousPos;
         currentObject.transform.localRotation = previousRot;
@@ -183,11 +178,10 @@ public class MainManager : Singleton<MainManager>
         previousPos = currentObject.transform.localPosition;
         previousRot = currentObject.transform.localRotation;
         currentObject.transform.localScale = Vector3.one;
-        PutInArray();
+        creation.AddToDict(currentObject);
         currentObject.GetComponent<Block>().RestoreDefaultColor();
         currentObject.GetComponent<Block>().DisableSnapPoints();
         currentObject = null;
-        nbrPlaced += 1;
         PlaceNext();
     }
 
@@ -254,11 +248,10 @@ public class MainManager : Singleton<MainManager>
 
     private bool CheckPosition(Vector3 position)
     {
-        if (position.x < 0 || position.x >= width ||
-            position.y < 0 || position.y >= height ||
-            position.z < 0 || position.z >= depth)
+        if (position.x < 0 || position.x >= creation.maxWidth ||
+            position.y < 0 || position.y >= creation.maxHeight ||
+            position.z < 0 || position.z >= creation.maxDepth)
         {
-            Debug.Log(false);
             return false;
         }
         else
@@ -287,24 +280,6 @@ public class MainManager : Singleton<MainManager>
         }
     }
 
-    public void Remove()
-    {
-        GameObject objectToDestroy = GetGameObject();
-
-        if (objectToDestroy != null)
-        {
-            Destroy(objectToDestroy);
-
-            workspaceArray[(int)currentObject.transform.localPosition.x,
-                (int)currentObject.transform.localPosition.y,
-                (int)currentObject.transform.localPosition.z] = null;
-
-            nbrPlaced -= 1;
-            previousPos = currentObject.transform.localPosition;
-            PlaceNext();
-        }
-    }
-
     public void ChangeObject(GameObject newObject)
     {
         previousPos = currentObject.transform.localPosition;
@@ -314,23 +289,10 @@ public class MainManager : Singleton<MainManager>
         PlaceNext();
     }
 
-    private GameObject GetGameObject()
-    {
-        return workspaceArray[(int)currentObject.transform.localPosition.x,
-            (int)currentObject.transform.localPosition.y,
-            (int)currentObject.transform.localPosition.z];
-    }
-
-    private void PutInArray()
-    {
-        workspaceArray[(int)currentObject.transform.localPosition.x, (int)currentObject.transform.localPosition.y,
-            (int)currentObject.transform.localPosition.z] = currentObject;
-    }
-
     private void CheckValid()
     {
         IsValid = false;
-        isOccupied = GetGameObject();
+        isOccupied = creation.CheckKey(currentObject.position);
     }
 
     public void SnapColliding()

@@ -11,25 +11,18 @@ public class Block : MonoBehaviour
     public Renderer[] renderers;
     public List<Material> materials;
     public List<Color> defaultColors;
+    public int weight;
 
     private void Start()
     {
+        position = transform.localPosition;
+        rotation = transform.localRotation;
         FindMats();
-    }
-
-    public BoolProperty[] getBoolProperties()
-    {
-        return type.boolProperties;
-    }
-
-    public FloatProperty[] getFloatProperties()
-    {
-        return type.floatProperties;
     }
 
     public void DisableSnapPoints()
     {
-        foreach(SnapPoint snap in snapPoints)
+        foreach (SnapPoint snap in snapPoints)
         {
             Destroy(snap.GetComponent<Rigidbody>());
             Destroy(snap);

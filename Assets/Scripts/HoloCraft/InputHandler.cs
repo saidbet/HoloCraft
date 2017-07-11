@@ -54,9 +54,10 @@ public class InputHandler : Singleton<InputHandler>
     float dpadY;
     bool dpadUsed;
 
-    private void Start()
+    protected override void Awake()
     {
-        controllerInput = new ControllerInput(0, 0.10f);   
+        base.Awake();
+        controllerInput = new ControllerInput(0, 0.10f);
     }
 
     void Update()

@@ -4,24 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class ObjectPicker : MonoBehaviour
+public class ObjectPicker : GuiMenu
 {
     public BlocksArray blocksArray;
-    public Button[] buttons;
-    private int currentIndex;
-    public HighlightManager highlight;
+    public GameObject elementPrefab;
+    public EventSystem eventSystem;
+    public ColorBlock colorBlock;
 
-    private void Start()
+    private void Awake()
     {
-        currentIndex = 0;
-        highlight.SetHighlight(buttons[currentIndex].gameObject);
+        guiElements = new GameObject[blocksArray.array.Length];
 
-        for(int i = 0; i < blocksArray.array.Length; i++)
+        for (int i = 0; i < blocksArray.array.Length; i++)
         {
-            buttons[i].image.sprite = blocksArray.array[i].thumbnail;
+            PlaceElement(i);
+            guiElements[i].GetComponent<Image>().sprite = blocksArray.array[i].thumbnail;
         }
 
-        InputHandler.Instance.keyPress += Instance_keyPress;
+        //InputHandler.Instance.keyPress += Instance_keyPress;
+        eventSystem.firstSelectedGameObject = guiElements[0];
     }
 
     private void Instance_keyPress(KeyPress obj)
@@ -42,45 +43,20 @@ public class ObjectPicker : MonoBehaviour
         }
     }
 
-    public void GetNewPos(MainManager.Direction direction)
+    protected void PlaceElement(int index)
     {
-        if(direction == MainManager.Direction.Right)
-        {
-            if (currentIndex == 11)
-            {
-                currentIndex = 0;
-            }
-            else
-                currentIndex += 1;
-        }
-        else if(direction == MainManager.Direction.Left)
-        {
-            if (currentIndex == 0)
-            {
-                currentIndex = 11;
-            }
-            else
-                currentIndex -= 1;
-        }
-        else if(direction == MainManager.Direction.Up)
-        {
-            if (currentIndex < 3)
-            {
-                currentIndex = currentIndex + 9;
-            }
-            else
-                currentIndex -= 3;
-        }
-        else if(direction == MainManager.Direction.Down)
-        {
-            if (currentIndex > 8)
-            {
-                currentIndex = currentIndex - 9;
-            }
-            else
-                currentIndex += 3;
-        }
-
-        highlight.SetHighlight(buttons[currentIndex].gameObject);
+        guiElements[index] = Instantiate(elementPrefab, transform);
+        guiElements[index].GetComponent<RectTransform>().anchoredPosition = GetValidPosition(index);
+        guiElements[index].GetComponent<Button>().colors = colorBlock;
     }
+
+    protected Vector2 GetValidPosition(int index)
+    {
+        int x = index % nbrElementPerLine;
+
+        int y = index / nbrElementPerLine;
+
+        return new Vector2(x * elementCoeff, -y * elementCoeff);
+    }
+
 }
