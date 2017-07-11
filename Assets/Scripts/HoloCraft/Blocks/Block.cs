@@ -5,8 +5,6 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     public BlockType type;
-    public Vector3 position;
-    public Quaternion rotation;
     public SnapPoint[] snapPoints;
     public Renderer[] renderers;
     public List<Material> materials;
@@ -15,8 +13,6 @@ public class Block : MonoBehaviour
 
     private void Start()
     {
-        position = transform.localPosition;
-        rotation = transform.localRotation;
         FindMats();
     }
 
@@ -65,6 +61,22 @@ public class Block : MonoBehaviour
         for (int i = 0; i < materials.Count; i++)
         {
             materials[i].SetColor("_Color", defaultColors[i]);
+        }
+    }
+
+    public void Hide()
+    {
+        for(int i = 0; i<renderers.Length; i++)
+        {
+            renderers[i].enabled = false;
+        }
+    }
+
+    public void UnHide()
+    {
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].enabled = true;
         }
     }
 }

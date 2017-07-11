@@ -42,16 +42,17 @@ public class MainManager : Singleton<MainManager>
     public Material invalidMat;
 
     private bool isValid;
-    private bool isOccupied;
 
     //Info relative to current block to place
     public GameObject objectToPlace;
     private Block currentObject;
+    private Block hoveredObject;
 
     //Reference to other scripts
     public Creation creation;
 
-    //Previous block pos and rot
+    //Position and rotation informations
+    private Vector3 currentPosition;
     private Vector3 previousPos;
     private Quaternion previousRot;
 
@@ -73,11 +74,33 @@ public class MainManager : Singleton<MainManager>
         }
     }
 
+    public Block HoveredObject
+    {
+        get { return hoveredObject; }
+
+        private set
+        {
+            if (hoveredObject != null)
+                hoveredObject.RestoreDefaultColor();
+
+            if (value != null)
+            {
+                currentObject.Hide();
+                value.SetMaterialColor(Color.yellow);
+            }
+            else
+            {
+                currentObject.UnHide();
+            }
+
+            hoveredObject = value;
+        }
+    }
+
     private void Start()
     {
         creation = GetComponent<Creation>();
         StartCoroutine(SpawnWorkspace());
-        previousPos = new Vector3(creation.maxHeight / 2, creation.maxWidth / 2, creation.maxDepth / 2);
         previousRot = Quaternion.identity;
         InputHandler.Instance.keyPress += Instance_keyPress;
     }
@@ -136,7 +159,7 @@ public class MainManager : Singleton<MainManager>
 
         if (obj.button == ControllerConfig.A)
         {
-            if (creation.GetBlock(currentObject.position) == null)
+            if (creation.GetBlock(currentPosition) == null)
                 Validate();
         }
         if (obj.button == ControllerConfig.B)
@@ -148,14 +171,16 @@ public class MainManager : Singleton<MainManager>
 
     private void StartPlacing()
     {
+        currentPosition = new Vector3(creation.maxHeight / 2, creation.maxWidth / 2, creation.maxDepth / 2);
         workspace = workspace.transform.Find("WorkspaceController").gameObject;
         currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace).GetComponent<Block>();
-        currentObject.transform.localPosition = previousPos;
-        creation.AddToDict(currentObject);
+        currentObject.transform.localPosition = currentPosition;
+        creation.AddToDict(currentPosition, currentObject);
         currentObject.GetComponent<Block>().DisableSnapPoints();
         currentObject = null;
         mode = Mode.Building;
         PlaceNext();
+        Translate(Direction.Up);
     }
 
     private void PlaceNext()
@@ -166,8 +191,7 @@ public class MainManager : Singleton<MainManager>
         }
 
         currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace).GetComponent<Block>();
-        currentObject.transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
-        currentObject.transform.localPosition = previousPos;
+        currentObject.transform.localPosition = currentPosition;
         currentObject.transform.localRotation = previousRot;
         CheckValid();
     }
@@ -176,10 +200,8 @@ public class MainManager : Singleton<MainManager>
     {
         if (isValid == false) return;
 
-        previousPos = currentObject.transform.localPosition;
         previousRot = currentObject.transform.localRotation;
-        currentObject.transform.localScale = Vector3.one;
-        creation.AddToDict(currentObject);
+        creation.AddToDict(currentPosition, currentObject);
         currentObject.GetComponent<Block>().RestoreDefaultColor();
         currentObject.GetComponent<Block>().DisableSnapPoints();
         currentObject = null;
@@ -222,7 +244,8 @@ public class MainManager : Singleton<MainManager>
 
         if (!CheckPosition(newPosition)) return;
 
-        currentObject.transform.localPosition += newTranslation;
+        currentPosition += newTranslation;
+        currentObject.transform.localPosition = currentPosition;
 
         CheckValid();
     }
@@ -293,12 +316,12 @@ public class MainManager : Singleton<MainManager>
     private void CheckValid()
     {
         IsValid = false;
-        isOccupied = creation.CheckKey(currentObject.position);
+        HoveredObject = creation.GetBlock(currentPosition);
     }
 
     public void SnapColliding()
     {
-        if (isOccupied == false && IsValid == false)
+        if (hoveredObject == null && IsValid == false)
         {
             IsValid = true;
         }

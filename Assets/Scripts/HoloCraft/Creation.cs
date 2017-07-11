@@ -37,9 +37,9 @@ public class Creation : MonoBehaviour
         return creationDict.ContainsKey(position);
     }
 
-    public void AddToDict(Block block)
+    public void AddToDict(Vector3 key, Block block)
     {
-        creationDict.Add(block.position, block);
+        creationDict.Add(key, block);
     }
 
     public void MoveWorkspace()

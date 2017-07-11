@@ -8,5 +8,15 @@ using UnityEngine.SceneManagement;
 
 public class test : MonoBehaviour
 {
-
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.A))
+        {
+            foreach(var item in GetComponent<Creation>().creationDict)
+            {
+                Debug.Log(item);
+            }
+            
+        }
+    }
 }

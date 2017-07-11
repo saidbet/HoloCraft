@@ -12,29 +12,35 @@ public struct PropertyPrefab
 
 public class PropertiesManager : MonoBehaviour
 {
-    public Block currentBlock;
-    public GameObject background;
-    private GameObject current;
-    private RectTransform rect;
     public PropertyPrefab[] propertiesArray;
-    public Dictionary<Property, GameObject> propertiesPrefabs;
+    public Dictionary<Property, GameObject> propertiesPrefabs = new Dictionary<Property, GameObject>();
 
     private void Awake()
     {
         for(int i = 0; i < propertiesArray.Length; i++)
         {
-            //propertiesPrefabs.Add(propertiesArray[i].property, propertiesArray[i].prefab);
+            propertiesPrefabs.Add(propertiesArray[i].property, propertiesArray[i].prefab);
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        //rect = current.GetComponent<RectTransform>();
-        //rect.pivot = new Vector2(0, 1);
-        //rect.anchoredPosition = new Vector2(0, 1);
-        //for(int i = 0; i< currentBlock.type.boolProperties.Length; i++)
-        //{
+        Block currentBlock = MainManager.Instance.HoveredObject;
+        if (currentBlock == null) return;
 
-        //}
+        for (int i = 0; i < currentBlock.type.properties.Length; i++)
+        {
+            Debug.Log(currentBlock.type.properties[i]);
+            GameObject currentGo = Instantiate(propertiesPrefabs[currentBlock.type.properties[i]], transform);
+            currentGo.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -i * 40);
+        }
+    }
+
+    private void OnDisable()
+    {
+        foreach(Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }

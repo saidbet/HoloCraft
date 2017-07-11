@@ -43,13 +43,8 @@ public class MenuManager : Singleton<MenuManager>
                 ToggleMenu(objectPicker, false);
         }
 
-        if (obj.button == ControllerConfig.LEFTTRIGGER)
-        {
-            if (obj.value == 1)
-                ToggleMenu(propertiesMenu, true);
-            else if (obj.value < 1 && obj.value > 0.1)
-                ToggleMenu(propertiesMenu, false);
-        }
+        if (obj.button == ControllerConfig.LEFTSTICK)
+                ToggleMenu(propertiesMenu, !propertiesMenu.activeSelf);
     }
 
     public void ToggleMenu(GameObject menu, bool state)
@@ -72,7 +67,7 @@ public class MenuManager : Singleton<MenuManager>
             }
         }
 
-        if(state == false && (MainManager.Instance.mode == MainManager.Mode.PickerMenu || MainManager.Instance.mode == MainManager.Mode.WorkspaceMenu))
+        if(state == false && (MainManager.Instance.mode == MainManager.Mode.PickerMenu || MainManager.Instance.mode == MainManager.Mode.WorkspaceMenu || MainManager.Instance.mode == MainManager.Mode.PropertiesMenu))
             MainManager.Instance.mode = MainManager.Mode.Building;
     }
 
