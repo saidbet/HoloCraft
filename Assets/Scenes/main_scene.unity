@@ -540,53 +540,15 @@ Prefab:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 23430299}
-    - target: {fileID: 1826876155763982, guid: eb1c833baebc1504691dbe35ceb6f956, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1619487436203002, guid: eb1c833baebc1504691dbe35ceb6f956, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224147846672459556, guid: eb1c833baebc1504691dbe35ceb6f956,
+    - target: {fileID: 114982240705221062, guid: eb1c833baebc1504691dbe35ceb6f956,
         type: 2}
-      propertyPath: m_AnchorMin.y
-      value: 0
+      propertyPath: m_HorizontalAxis
+      value: DpadHoriz
       objectReference: {fileID: 0}
-    - target: {fileID: 224147846672459556, guid: eb1c833baebc1504691dbe35ceb6f956,
+    - target: {fileID: 114982240705221062, guid: eb1c833baebc1504691dbe35ceb6f956,
         type: 2}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224147846672459556, guid: eb1c833baebc1504691dbe35ceb6f956,
-        type: 2}
-      propertyPath: m_AnchoredPosition.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224147846672459556, guid: eb1c833baebc1504691dbe35ceb6f956,
-        type: 2}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 224147846672459556, guid: eb1c833baebc1504691dbe35ceb6f956,
-        type: 2}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224147846672459556, guid: eb1c833baebc1504691dbe35ceb6f956,
-        type: 2}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224147846672459556, guid: eb1c833baebc1504691dbe35ceb6f956,
-        type: 2}
-      propertyPath: m_SizeDelta.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 224147846672459556, guid: eb1c833baebc1504691dbe35ceb6f956,
-        type: 2}
-      propertyPath: m_SizeDelta.y
-      value: -0
+      propertyPath: m_VerticalAxis
+      value: DpadVert
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: eb1c833baebc1504691dbe35ceb6f956, type: 2}

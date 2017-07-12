@@ -34,6 +34,7 @@ public class ObjectPicker : MonoBehaviour
     {
         guiElements[index] = Instantiate(elementPrefab, transform);
         guiElements[index].GetComponent<RectTransform>().anchoredPosition = GetValidPosition(index);
+        guiElements[index].GetComponent<BlockHolder>().blockType = blocksArray.array[index];
     }
 
     protected Vector2 GetValidPosition(int index)

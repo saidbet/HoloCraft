@@ -30,9 +30,9 @@ public class PropertiesManager : MonoBehaviour
 
         for (int i = 0; i < currentBlock.type.properties.Length; i++)
         {
-            Debug.Log(currentBlock.type.properties[i]);
-            GameObject currentGo = Instantiate(propertiesPrefabs[currentBlock.type.properties[i]], transform);
-            currentGo.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -i * 40);
+            propertiesPrefabs[currentBlock.type.properties[i]] = Instantiate(propertiesPrefabs[currentBlock.type.properties[i]], transform);
+            propertiesPrefabs[currentBlock.type.properties[i]].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -i * 40);
+
         }
     }
 
@@ -42,5 +42,12 @@ public class PropertiesManager : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+
+        for (int i = 0; i < propertiesArray.Length; i++)
+        {
+            propertiesPrefabs.Add(propertiesArray[i].property, propertiesArray[i].prefab);
+        }
     }
+
+
 }

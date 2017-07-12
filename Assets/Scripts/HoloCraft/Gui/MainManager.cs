@@ -53,7 +53,6 @@ public class MainManager : Singleton<MainManager>
 
     //Position and rotation informations
     private Vector3 currentPosition;
-    private Vector3 previousPos;
     private Quaternion previousRot;
 
     //Current mode
@@ -187,7 +186,7 @@ public class MainManager : Singleton<MainManager>
     {
         if (currentObject != null)
         {
-            Destroy(currentObject);
+            Destroy(currentObject.gameObject);
         }
 
         currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace).GetComponent<Block>();
@@ -252,7 +251,6 @@ public class MainManager : Singleton<MainManager>
 
     public void Rotate(Direction direction)
     {
-        Debug.Log("Rotate : " + direction);
         switch (direction)
         {
             case Direction.Left:
@@ -306,10 +304,10 @@ public class MainManager : Singleton<MainManager>
 
     public void ChangeObject(GameObject newObject)
     {
-        previousPos = currentObject.transform.localPosition;
         previousRot = currentObject.transform.localRotation;
-        Destroy(currentObject);
+        Destroy(currentObject.gameObject);
         objectToPlace = newObject;
+        Debug.Log(objectToPlace);
         PlaceNext();
     }
 
