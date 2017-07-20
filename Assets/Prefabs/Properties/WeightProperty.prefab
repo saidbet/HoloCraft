@@ -125,6 +125,7 @@ GameObject:
   - component: {fileID: 224757488359505104}
   - component: {fileID: 222650666002493572}
   - component: {fileID: 114397823204604596}
+  - component: {fileID: 114982383732653786}
   m_Layer: 2
   m_Name: WeightProperty
   m_TagString: Untagged
@@ -495,6 +496,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114982383732653786
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1482153000297830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7110635303efc0c43b410cad4baa7d6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  property: 0
 --- !u!222 &222110963945341162
 CanvasRenderer:
   m_ObjectHideFlags: 1

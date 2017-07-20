@@ -7,6 +7,6 @@ public class PropertiesOnSubmit : EventTrigger
 {
     public override void OnSubmit(BaseEventData eventData)
     {
-        //
+        GetComponentInParent<>
     }
 }

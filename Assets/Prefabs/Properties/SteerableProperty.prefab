@@ -73,6 +73,7 @@ GameObject:
   - component: {fileID: 224252845121181694}
   - component: {fileID: 222571044150631356}
   - component: {fileID: 114478989746162852}
+  - component: {fileID: 114576790273061876}
   m_Layer: 2
   m_Name: SteerableProperty
   m_TagString: Untagged
@@ -300,6 +301,18 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114576790273061876
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1297002292386136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7110635303efc0c43b410cad4baa7d6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  property: 2
 --- !u!114 &114670372699238892
 MonoBehaviour:
   m_ObjectHideFlags: 1
