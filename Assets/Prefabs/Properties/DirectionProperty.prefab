@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 224018061454204252}
   - component: {fileID: 222936231877695322}
   - component: {fileID: 114539292516682388}
-  - component: {fileID: 114484772116992786}
+  - component: {fileID: 114329242098281112}
   m_Layer: 2
   m_Name: DirectionProperty
   m_TagString: Untagged
@@ -115,6 +115,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114329242098281112
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1230541045889986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dac08224ed36e0f48b4d20acb0ced0e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  property: 3
+  toggle: {fileID: 114366755740427302}
+  plusButton: {fileID: 0}
+  minButton: {fileID: 0}
+  input: {fileID: 0}
+  currentObject: {fileID: 0}
+  currentProperty: {fileID: 0}
 --- !u!114 &114366755740427302
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -160,18 +178,6 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 0
---- !u!114 &114484772116992786
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1230541045889986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7110635303efc0c43b410cad4baa7d6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  property: 3
 --- !u!114 &114513216787533884
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 224948870076583912}
   - component: {fileID: 222248304000554252}
   - component: {fileID: 114511548524631100}
-  - component: {fileID: 114575147371542280}
+  - component: {fileID: 114334246420906634}
   m_Layer: 2
   m_Name: SpeedProperty
   m_TagString: Untagged
@@ -254,6 +254,24 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Speed
+--- !u!114 &114334246420906634
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1619234077959264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dac08224ed36e0f48b4d20acb0ced0e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  property: 1
+  toggle: {fileID: 0}
+  plusButton: {fileID: 1285484920956234}
+  minButton: {fileID: 1614300969767798}
+  input: {fileID: 114467020668475882}
+  currentObject: {fileID: 0}
+  currentProperty: {fileID: 0}
 --- !u!114 &114334730680344270
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -415,18 +433,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114575147371542280
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1619234077959264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7110635303efc0c43b410cad4baa7d6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  property: 1
 --- !u!114 &114825432223412792
 MonoBehaviour:
   m_ObjectHideFlags: 1

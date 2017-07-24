@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct KeyPress
+public class KeyPress
 {
     public const int AXIS = 0;
     public const int DOWN = 1;

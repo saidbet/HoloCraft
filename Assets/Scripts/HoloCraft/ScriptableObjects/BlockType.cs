@@ -8,5 +8,5 @@ public class BlockType : ScriptableObject
     public string blockName;
     public GameObject prefab;
     public Sprite thumbnail;
-    public Property[] properties;
+    public PropertyValue[] properties;
 }

@@ -14,4 +14,6 @@ MonoBehaviour:
   blockName: Cube
   prefab: {fileID: 1894890794699004, guid: c77abf63d1fe05e449b0ab1cf1fe10cc, type: 2}
   thumbnail: {fileID: 21300000, guid: 3458d9bcac51afa4f993c208fd795a91, type: 3}
-  properties: 00000000
+  properties:
+  - property: 0
+    value: 20

@@ -9,11 +9,16 @@ public class Block : MonoBehaviour
     public Renderer[] renderers;
     public List<Material> materials;
     public List<Color> defaultColors;
-    public int weight;
+    public List<Property> properties;
 
     private void Start()
     {
-        FindMats();
+        properties = new List<Property>();
+
+        foreach(PropertyValue prop in type.properties)
+        {
+            properties.Add(new Property(prop.property, prop.value));
+        }
     }
 
     public void DisableSnapPoints()

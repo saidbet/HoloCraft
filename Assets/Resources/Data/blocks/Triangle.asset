@@ -14,4 +14,6 @@ MonoBehaviour:
   blockName: Triangle
   prefab: {fileID: 1626418000006376, guid: 331deff840109834bbfa07684e115ca9, type: 2}
   thumbnail: {fileID: 21300000, guid: a4868c065db873b4393e47b33956fab2, type: 3}
-  properties: 00000000
+  properties:
+  - property: 0
+    value: 20

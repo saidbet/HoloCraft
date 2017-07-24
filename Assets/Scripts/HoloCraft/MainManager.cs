@@ -46,7 +46,7 @@ public class MainManager : Singleton<MainManager>
     //Info relative to current block to place
     public GameObject objectToPlace;
     private Block currentObject;
-    private Block hoveredObject;
+    public Block hoveredObject;
 
     //Reference to other scripts
     public Creation creation;
