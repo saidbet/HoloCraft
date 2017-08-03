@@ -1,8 +1,6 @@
 ﻿using HoloToolkit.Sharing.Spawning;
 using HoloToolkit.Unity;
-using HoloToolkit.Unity.InputModule;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MainManager : Singleton<MainManager>
@@ -28,25 +26,16 @@ public class MainManager : Singleton<MainManager>
         Playing
     }
 
-    public enum Axis
-    {
-        X,
-        Y,
-        Z
-    }
-
     public GameObject workspacePrefab;
     private GameObject workspace;
 
-    public Material validMat;
-    public Material invalidMat;
-
-    private bool isValid;
+    private bool _isValid;
 
     //Info relative to current block to place
     public GameObject objectToPlace;
     private Block currentObject;
-    public Block hoveredObject;
+    public Block _hoveredObject;
+    public Block firstBlock;
 
     //Reference to other scripts
     public Creation creation;
@@ -55,12 +44,30 @@ public class MainManager : Singleton<MainManager>
     private Vector3 currentPosition;
     private Quaternion previousRot;
 
+    private float timer;
+
     //Current mode
-    public Mode mode;
+    private Mode _currentMode;
+
+    public Mode CurrentMode
+    {
+        get { return _currentMode; }
+
+        set
+        {
+            if (timer <= 0)
+            {
+                _currentMode = value;
+                timer = 0.1f;
+            }
+            else
+                return;
+        }
+    }
 
     bool IsValid
     {
-        get { return isValid; }
+        get { return _isValid; }
 
         set
         {
@@ -69,18 +76,18 @@ public class MainManager : Singleton<MainManager>
             else
                 currentObject.GetComponent<Block>().SetMaterialColor(Color.red);
 
-            isValid = value;
+            _isValid = value;
         }
     }
 
     public Block HoveredObject
     {
-        get { return hoveredObject; }
+        get { return _hoveredObject; }
 
         private set
         {
-            if (hoveredObject != null)
-                hoveredObject.RestoreDefaultColor();
+            if (_hoveredObject != null)
+                _hoveredObject.RestoreDefaultColor();
 
             if (value != null)
             {
@@ -92,7 +99,7 @@ public class MainManager : Singleton<MainManager>
                 currentObject.UnHide();
             }
 
-            hoveredObject = value;
+            _hoveredObject = value;
         }
     }
 
@@ -102,6 +109,12 @@ public class MainManager : Singleton<MainManager>
         StartCoroutine(SpawnWorkspace());
         previousRot = Quaternion.identity;
         InputHandler.Instance.keyPress += Instance_keyPress;
+    }
+
+    private void Update()
+    {
+        if (timer > 0)
+            timer -= Time.deltaTime;
     }
 
     private IEnumerator SpawnWorkspace()
@@ -132,7 +145,7 @@ public class MainManager : Singleton<MainManager>
 
     private void Instance_keyPress(KeyPress obj)
     {
-        if (mode != Mode.Building) return;
+        if (CurrentMode != Mode.Building) return;
 
         if (obj.button == ControllerConfig.RIGHT)
             Translate(Direction.Right);
@@ -163,7 +176,8 @@ public class MainManager : Singleton<MainManager>
         }
         if (obj.button == ControllerConfig.B)
         {
-            creation.RemoveBlock(currentObject.transform.position);
+            if (_hoveredObject != null && _hoveredObject != firstBlock)
+                creation.RemoveBlock(_hoveredObject.transform.localPosition);
             PlaceNext();
         }
     }
@@ -172,12 +186,12 @@ public class MainManager : Singleton<MainManager>
     {
         currentPosition = new Vector3(creation.maxHeight / 2, creation.maxWidth / 2, creation.maxDepth / 2);
         workspace = workspace.transform.Find("WorkspaceController").gameObject;
-        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace).GetComponent<Block>();
-        currentObject.transform.localPosition = currentPosition;
+        firstBlock = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace).GetComponent<Block>();
+        firstBlock.transform.localPosition = currentPosition;
         creation.AddToDict(currentPosition, currentObject);
-        currentObject.GetComponent<Block>().DisableSnapPoints();
-        currentObject = null;
-        mode = Mode.Building;
+        firstBlock.GetComponent<Block>().DisableSnapPoints();
+        firstBlock.FindMats();
+        CurrentMode = Mode.Building;
         PlaceNext();
         Translate(Direction.Up);
     }
@@ -192,12 +206,13 @@ public class MainManager : Singleton<MainManager>
         currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace).GetComponent<Block>();
         currentObject.transform.localPosition = currentPosition;
         currentObject.transform.localRotation = previousRot;
+        currentObject.FindMats();
         CheckValid();
     }
 
     public void Validate()
     {
-        if (isValid == false) return;
+        if (_isValid == false) return;
 
         previousRot = currentObject.transform.localRotation;
         creation.AddToDict(currentPosition, currentObject);
@@ -234,9 +249,9 @@ public class MainManager : Singleton<MainManager>
 
         Vector3 newTranslation = workspace.transform.InverseTransformDirection(translation);
 
-        newTranslation.x = Round(newTranslation.x);
-        newTranslation.y = Round(newTranslation.y);
-        newTranslation.z = Round(newTranslation.z);
+        newTranslation.x = Utility.Round(newTranslation.x);
+        newTranslation.y = Utility.Round(newTranslation.y);
+        newTranslation.z = Utility.Round(newTranslation.z);
 
         Vector3 newPosition = currentObject.transform.localPosition + newTranslation;
 
@@ -282,32 +297,11 @@ public class MainManager : Singleton<MainManager>
         }
     }
 
-    public static float Round(float nbr)
-    {
-        if (nbr > 0.5)
-        {
-            return 1;
-        }
-        else if (nbr <= 0.5 && nbr >= -0.5)
-        {
-            return 0;
-        }
-        else if (nbr < -0.5)
-        {
-            return -1;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
     public void ChangeObject(GameObject newObject)
     {
         previousRot = currentObject.transform.localRotation;
         Destroy(currentObject.gameObject);
         objectToPlace = newObject;
-        Debug.Log(objectToPlace);
         PlaceNext();
     }
 
@@ -319,9 +313,29 @@ public class MainManager : Singleton<MainManager>
 
     public void SnapColliding()
     {
-        if (hoveredObject == null && IsValid == false)
+        if (_hoveredObject == null && IsValid == false)
         {
             IsValid = true;
+        }
+    }
+
+    public void StartPlayMode()
+    {
+        CurrentMode = Mode.Playing;
+
+        GameObject fb = Instantiate(firstBlock.type.playPrefab, firstBlock.transform.parent);
+        fb.transform.localPosition = firstBlock.transform.localPosition;
+        firstBlock.gameObject.SetActive(false);
+
+        Rigidbody rb = fb.GetComponent<Rigidbody>();
+
+        foreach (var blk in creation.creationDict)
+        {
+            GameObject instance = Instantiate(blk.Value.type.playPrefab, blk.Value.transform.parent);
+            instance.GetComponent<BlockPropertiesValues>().properties = blk.Value.GetComponent<BlockPropertiesValues>().properties;
+            blk.Value.gameObject.SetActive(false);
+            instance.transform.localPosition = blk.Key;
+            instance.GetComponent<FixedJoint>().connectedBody = rb;
         }
     }
 }

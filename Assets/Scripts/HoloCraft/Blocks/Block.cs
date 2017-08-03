@@ -1,24 +1,20 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class Block : MonoBehaviour
 {
     public BlockType type;
     public SnapPoint[] snapPoints;
+
     public Renderer[] renderers;
     public List<Material> materials;
     public List<Color> defaultColors;
-    public List<Property> properties;
 
     private void Start()
     {
-        properties = new List<Property>();
-
-        foreach(PropertyValue prop in type.properties)
-        {
-            properties.Add(new Property(prop.property, prop.value));
-        }
+        GetComponent<BlockPropertiesValues>().CreateProperties();
     }
 
     public void DisableSnapPoints()
@@ -71,7 +67,7 @@ public class Block : MonoBehaviour
 
     public void Hide()
     {
-        for(int i = 0; i<renderers.Length; i++)
+        for (int i = 0; i < renderers.Length; i++)
         {
             renderers[i].enabled = false;
         }

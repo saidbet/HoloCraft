@@ -13,11 +13,11 @@ public class AnchorSynchronizer : Synchronizer
 {
     private SyncSpawnedObject dataModel;
     public SyncVector3 color;
-    private MeshRenderer renderer;
+    private MeshRenderer meshRenderer;
 
     private void Start()
     {
-        renderer = GetComponentInChildren<MeshRenderer>();
+        meshRenderer = GetComponentInChildren<MeshRenderer>();
     }
 
     private void Update()
@@ -26,16 +26,16 @@ public class AnchorSynchronizer : Synchronizer
         {
             if (SharingStage.Instance.Manager.GetLocalUser().GetID() == dataModel.Owner.GetID())
             {
-                if (renderer.material.color != GetColor(color))
+                if (meshRenderer.material.color != GetColor(color))
                 {
-                    color.Value = GetVector(renderer.material.color);
+                    color.Value = GetVector(meshRenderer.material.color);
                 }
             }
             else
             {
-                if (renderer.material.color != GetColor(color))
+                if (meshRenderer.material.color != GetColor(color))
                 {
-                    renderer.material.color = GetColor(color);
+                    meshRenderer.material.color = GetColor(color);
                 }
             }
         }

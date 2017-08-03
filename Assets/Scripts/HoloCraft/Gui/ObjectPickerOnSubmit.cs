@@ -7,6 +7,6 @@ public class ObjectPickerOnSubmit : EventTrigger {
 
     public override void OnSubmit(BaseEventData eventData)
     {
-        MainManager.Instance.ChangeObject(eventData.selectedObject.GetComponent<BlockHolder>().blockType.prefab);
+        MainManager.Instance.ChangeObject(eventData.selectedObject.GetComponent<BlockHolder>().blockType.buildPrefab);
     }
 }

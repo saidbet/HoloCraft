@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class WorkspaceController : MonoBehaviour
 {
@@ -13,17 +10,24 @@ public class WorkspaceController : MonoBehaviour
 
     private void Instance_keyPress(KeyPress obj)
     {
-        if (MainManager.Instance.mode == MainManager.Mode.Building)
+        if (MainManager.Instance.CurrentMode == MainManager.Mode.Building)
         {
+            if (obj.button == ControllerConfig.RIGHTSTICKUP)
+                RotateWorkspace(MainManager.Direction.Up);
+            else if (obj.button == ControllerConfig.RIGHTSTICKDOWN)
+                RotateWorkspace(MainManager.Direction.Down);
+            else if (obj.button == ControllerConfig.RIGHTSTICKLEFT)
+                RotateWorkspace(MainManager.Direction.Left);
+            else if (obj.button == ControllerConfig.RIGHTSTICKRIGHT)
+                RotateWorkspace(MainManager.Direction.Right);
+            else if (obj.button == ControllerConfig.RIGHTSTICKDOWN)
+                RotateWorkspace(MainManager.Direction.Down);
 
-            if (obj.button == ControllerConfig.RIGHTSTICKX)
-                RotateWorkspace(MainManager.Axis.X, obj.value);
-            if (obj.button == ControllerConfig.RIGHTSTICKY)
-                RotateWorkspace(MainManager.Axis.Y, obj.value);
             if (obj.button == ControllerConfig.RIGHTSTICK)
                 ResetRotation();
         }
-        else if (MainManager.Instance.mode == MainManager.Mode.Moving)
+
+        else if (MainManager.Instance.CurrentMode == MainManager.Mode.Moving)
         {
             if (obj.button == ControllerConfig.LEFTSTICKX)
             {
@@ -34,41 +38,45 @@ public class WorkspaceController : MonoBehaviour
             }
             if (obj.button == ControllerConfig.LEFTSTICKY)
             {
-                if(obj.value > 0)
+                if (obj.value > 0)
                     MoveWorkspace(MainManager.Direction.Up);
                 else
                     MoveWorkspace(MainManager.Direction.Down);
             }
             if (obj.button == ControllerConfig.LEFTSTICK)
                 ResetPosition();
+
             if (obj.button == ControllerConfig.Y)
                 MoveWorkspace(MainManager.Direction.Forward);
+
             if (obj.button == ControllerConfig.X)
                 MoveWorkspace(MainManager.Direction.Backward);
+
             if (obj.button == ControllerConfig.A)
-                MainManager.Instance.mode = MainManager.Mode.Building;
+                MainManager.Instance.CurrentMode = MainManager.Mode.Building;
         }
-        else if(MainManager.Instance.mode == MainManager.Mode.Scaling)
+
+        else if (MainManager.Instance.CurrentMode == MainManager.Mode.Scaling)
         {
             if (obj.button == ControllerConfig.UP)
                 ScaleWorkspace(MainManager.Direction.Up);
             if (obj.button == ControllerConfig.DOWN)
                 ScaleWorkspace(MainManager.Direction.Down);
             if (obj.button == ControllerConfig.A)
-                MainManager.Instance.mode = MainManager.Mode.Building;
+                MainManager.Instance.CurrentMode = MainManager.Mode.Building;
         }
     }
 
-    private void RotateWorkspace(MainManager.Axis axis, float value)
+    private void RotateWorkspace(MainManager.Direction direction)
     {
-        if(axis == MainManager.Axis.X)
-        {
-            transform.Rotate(0, -value*4, 0, Space.World);
-        }
-        else if(axis == MainManager.Axis.Y)
-        {
-            transform.Rotate(-value*4, 0, 0, Space.World);
-        }
+        if (direction == MainManager.Direction.Up)
+            transform.Rotate(45, 0, 0, Space.World);
+        else if (direction == MainManager.Direction.Down)
+            transform.Rotate(-45, 0, 0, Space.World);
+        else if (direction == MainManager.Direction.Left)
+            transform.Rotate(0, 45, 0, Space.World);
+        else if (direction == MainManager.Direction.Right)
+            transform.Rotate(0, -45, 0, Space.World);
     }
 
     private void MoveWorkspace(MainManager.Direction direction)
@@ -98,11 +106,11 @@ public class WorkspaceController : MonoBehaviour
 
         Vector3 newTranslation = Vector3.zero;
 
-        newTranslation.x = MainManager.Round(translation.x);
-        newTranslation.y = MainManager.Round(translation.y);
-        newTranslation.z = MainManager.Round(translation.z);
+        newTranslation.x = Utility.Round(translation.x);
+        newTranslation.y = Utility.Round(translation.y);
+        newTranslation.z = Utility.Round(translation.z);
 
-        transform.position += newTranslation/4;
+        transform.position += newTranslation / 4;
     }
 
     private void ResetRotation()
@@ -112,7 +120,7 @@ public class WorkspaceController : MonoBehaviour
 
     private void ResetPosition()
     {
-        transform.position = Vector3.zero;
+        transform.position = Camera.main.transform.forward;
     }
 
     private void ScaleWorkspace(MainManager.Direction direction)
@@ -121,5 +129,10 @@ public class WorkspaceController : MonoBehaviour
             transform.localScale += new Vector3(0.1f, 0.1f, 0.1f);
         else if (direction == MainManager.Direction.Down)
             transform.localScale -= new Vector3(0.1f, 0.1f, 0.1f);
+    }
+
+    private void Validate()
+    {
+        MainManager.Instance.CurrentMode = MainManager.Mode.Building;
     }
 }

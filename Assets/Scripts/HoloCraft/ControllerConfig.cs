@@ -33,4 +33,9 @@ public class ControllerConfig : Singleton<ControllerConfig>
 
     public const int LEFTTRIGGER = 20;
     public const int RIGHTTRIGGER = 21;
+
+    public const int RIGHTSTICKUP = 22;
+    public const int RIGHTSTICKDOWN = 23;
+    public const int RIGHTSTICKLEFT = 24;
+    public const int RIGHTSTICKRIGHT = 25;
 }
