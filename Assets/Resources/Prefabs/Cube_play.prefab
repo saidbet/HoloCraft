@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 54609810883667412}
   - component: {fileID: 138325686807272496}
   - component: {fileID: 114008722681200458}
+  - component: {fileID: 65096044363275200}
   m_Layer: 0
   m_Name: Cube_play
   m_TagString: Untagged
@@ -127,6 +128,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &65096044363275200
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1445700576734932}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114008722681200458
 MonoBehaviour:
   m_ObjectHideFlags: 1

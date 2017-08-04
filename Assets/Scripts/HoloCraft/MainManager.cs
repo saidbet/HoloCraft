@@ -27,7 +27,8 @@ public class MainManager : Singleton<MainManager>
     }
 
     public GameObject workspacePrefab;
-    private GameObject workspace;
+    private WorkspaceController workspaceController;
+    public GameObject workspaceHolder;
 
     private bool _isValid;
 
@@ -125,19 +126,19 @@ public class MainManager : Singleton<MainManager>
         {
             if (ShareManager.Instance.spawnManager != null && ShareManager.Instance.spawnManager.SyncSourceReady())
             {
-                workspace = ShareManager.Instance.spawnManager.Spawn(new SyncPanel(), workspacePrefab, NetworkSpawnManager.EVERYONE, "");
-                workspace.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 1.5f;
+                workspaceController = ShareManager.Instance.spawnManager.Spawn(new SyncPanel(), workspacePrefab, NetworkSpawnManager.EVERYONE, "").GetComponent<WorkspaceController>();
+                workspaceController.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 1.5f;
             }
 
             yield return new WaitForSeconds(0.1f);
             timer -= 1;
         }
-        while (workspace == null && timer > 0);
+        while (workspaceController == null && timer > 0);
 
-        if (workspace == null)
+        if (workspaceController == null)
         {
-            workspace = ShareManager.Instance.spawnManager.Spawn(new SyncPanel(), workspacePrefab, NetworkSpawnManager.EVERYONE, "");
-            workspace.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 1;
+            workspaceController = ShareManager.Instance.spawnManager.Spawn(new SyncPanel(), workspacePrefab, NetworkSpawnManager.EVERYONE, "").GetComponent<WorkspaceController>();
+            workspaceController.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 1;
         }
 
         StartPlacing();
@@ -185,10 +186,10 @@ public class MainManager : Singleton<MainManager>
     private void StartPlacing()
     {
         currentPosition = new Vector3(creation.maxHeight / 2, creation.maxWidth / 2, creation.maxDepth / 2);
-        workspace = workspace.transform.Find("WorkspaceController").gameObject;
-        firstBlock = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace).GetComponent<Block>();
+        workspaceHolder = workspaceController.workspaceHolder;
+        firstBlock = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspaceHolder).GetComponent<Block>();
         firstBlock.transform.localPosition = currentPosition;
-        creation.AddToDict(currentPosition, currentObject);
+        creation.AddToDict(currentPosition, firstBlock);
         firstBlock.GetComponent<Block>().DisableSnapPoints();
         firstBlock.FindMats();
         CurrentMode = Mode.Building;
@@ -203,7 +204,7 @@ public class MainManager : Singleton<MainManager>
             Destroy(currentObject.gameObject);
         }
 
-        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspace).GetComponent<Block>();
+        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspaceHolder).GetComponent<Block>();
         currentObject.transform.localPosition = currentPosition;
         currentObject.transform.localRotation = previousRot;
         currentObject.FindMats();
@@ -247,7 +248,7 @@ public class MainManager : Singleton<MainManager>
                 break;
         }
 
-        Vector3 newTranslation = workspace.transform.InverseTransformDirection(translation);
+        Vector3 newTranslation = workspaceController.transform.InverseTransformDirection(translation);
 
         newTranslation.x = Utility.Round(newTranslation.x);
         newTranslation.y = Utility.Round(newTranslation.y);
@@ -321,21 +322,27 @@ public class MainManager : Singleton<MainManager>
 
     public void StartPlayMode()
     {
+        Destroy(currentObject.gameObject);
         CurrentMode = Mode.Playing;
 
         GameObject fb = Instantiate(firstBlock.type.playPrefab, firstBlock.transform.parent);
         fb.transform.localPosition = firstBlock.transform.localPosition;
         firstBlock.gameObject.SetActive(false);
-
+        Destroy(fb.GetComponent<FixedJoint>());
         Rigidbody rb = fb.GetComponent<Rigidbody>();
 
         foreach (var blk in creation.creationDict)
         {
+            if (blk.Value == firstBlock) continue;
             GameObject instance = Instantiate(blk.Value.type.playPrefab, blk.Value.transform.parent);
             instance.GetComponent<BlockPropertiesValues>().properties = blk.Value.GetComponent<BlockPropertiesValues>().properties;
             blk.Value.gameObject.SetActive(false);
             instance.transform.localPosition = blk.Key;
+            instance.transform.localRotation = blk.Value.transform.localRotation;
             instance.GetComponent<FixedJoint>().connectedBody = rb;
         }
+
+        workspaceController.GetComponent<WorkspaceController>().ToggleVisual(false);
+
     }
 }

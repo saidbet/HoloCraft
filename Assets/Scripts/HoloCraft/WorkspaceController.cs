@@ -3,6 +3,9 @@
 public class WorkspaceController : MonoBehaviour
 {
 
+    public GameObject workspaceVisual;
+    public GameObject workspaceHolder;
+
     private void Start()
     {
         InputHandler.Instance.keyPress += Instance_keyPress;
@@ -134,5 +137,10 @@ public class WorkspaceController : MonoBehaviour
     private void Validate()
     {
         MainManager.Instance.CurrentMode = MainManager.Mode.Building;
+    }
+
+    public void ToggleVisual(bool state)
+    {
+        workspaceVisual.SetActive(state);
     }
 }

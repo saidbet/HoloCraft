@@ -17,5 +17,6 @@ public class WorkspaceMenu : MonoBehaviour
     public void StartPlay()
     {
         MainManager.Instance.StartPlayMode();
+        MenuManager.Instance.ToggleMenu(gameObject, false);
     }
 }
