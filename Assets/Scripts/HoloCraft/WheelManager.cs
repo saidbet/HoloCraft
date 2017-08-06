@@ -28,6 +28,8 @@ public class WheelManager : MonoBehaviour
 
     private void Update()
     {
+        if (MainManager.Instance.CurrentMode != MainManager.Mode.Playing) return;
+
         UpdateMeshePosition();
         if (accelValue != 0)
         {
@@ -53,6 +55,7 @@ public class WheelManager : MonoBehaviour
 
     private void Instance_keyPress(KeyPress obj)
     {
+        if (MainManager.Instance.CurrentMode != MainManager.Mode.Playing) return;
 
         if (obj.button == ControllerConfig.RIGHTTRIGGER)
         {
