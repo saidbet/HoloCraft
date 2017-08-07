@@ -13,8 +13,7 @@ public class BlockType : ScriptableObject
     }
 
     public BlockTypes blockType;
-    public GameObject buildPrefab;
-    public GameObject playPrefab;
+    public GameObject prefab;
     public Sprite thumbnail;
     public PropertyValue[] properties;
 }
