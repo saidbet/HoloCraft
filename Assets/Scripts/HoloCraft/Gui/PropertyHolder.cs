@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class PropertyHolder : MonoBehaviour
@@ -16,30 +14,41 @@ public class PropertyHolder : MonoBehaviour
 
     private void Start()
     {
-        currentObject = MainManager.Instance.hoveredObject;
-        currentProperty = currentObject.properties.Find(prop => prop.property == property);
-        input.text = currentProperty.value.ToString();
+        currentObject = MainManager.Instance._hoveredObject;
+        currentProperty = currentObject.GetComponent<BlockPropertiesValues>().properties.Find(prop => prop.property == property);
+
+        if (input != null)
+            input.text = currentProperty.value.ToString();
+        else
+        {
+            if (currentProperty.value == 0)
+                toggle.isOn = false;
+            else
+                toggle.isOn = true;
+        }
+
     }
 
     public void OnButtonClick(GameObject button)
     {
         float value = float.Parse(input.text);
 
-        if(button == plusButton)
+        if (button == plusButton)
         {
             value += 1;
         }
-        else if(button == minButton)
+        else if (button == minButton)
         {
             value -= 1;
         }
 
         currentProperty.value = value;
+        input.text = value.ToString();
     }
 
     public void OnToggleChange()
     {
-        if(toggle.isOn == true)
+        if (toggle.isOn == true)
         {
             currentProperty.value = 1;
         }

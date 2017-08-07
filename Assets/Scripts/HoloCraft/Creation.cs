@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Creation : MonoBehaviour
@@ -16,10 +16,8 @@ public class Creation : MonoBehaviour
 
     public void RemoveBlock(Vector3 position)
     {
-        if (creationDict.ContainsKey(position))
-        {
-            Destroy(GetBlock(position).gameObject);
-        }
+        Destroy(GetBlock(position).gameObject);
+        creationDict.Remove(position);
     }
 
     public Block GetBlock(Vector3 position)
@@ -42,15 +40,19 @@ public class Creation : MonoBehaviour
         creationDict.Add(key, block);
     }
 
-    public void MoveWorkspace()
+    public void SaveCreation(string name)
     {
-        MainManager.Instance.mode = MainManager.Mode.Moving;
-        MenuManager.Instance.ToggleMenu(gameObject, false);
+        //TODO
     }
 
-    public void ScaleWorkspace()
+    public string GetFilePath(string fileName)
     {
-        MainManager.Instance.mode = MainManager.Mode.Scaling;
-        MenuManager.Instance.ToggleMenu(gameObject, false);
+        return Path.Combine(Application.streamingAssetsPath, fileName + ".JSON");
+    }
+
+
+    public void FindAdjacents()
+    {
+        //List<Vector3> positions = creationDict.Keys.ToList();
     }
 }

@@ -81,7 +81,7 @@ public class SharedController : Singleton<SharedController>
 
     public void SetBackyard()
     {
-        GameObject backyard = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), backyardPrefab, NetworkSpawnManager.EVERYONE, "");
+        ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), backyardPrefab, NetworkSpawnManager.EVERYONE, "");
     }
 
     public void fetchAnchors(string anchorsCSV)

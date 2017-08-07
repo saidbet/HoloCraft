@@ -21,10 +21,10 @@ public class MenuManager : Singleton<MenuManager>
 
     private void Instance_keyPress(KeyPress obj)
     {
-        if (MainManager.Instance.mode != MainManager.Mode.Building &&
-            MainManager.Instance.mode != MainManager.Mode.WorkspaceMenu &&
-            MainManager.Instance.mode != MainManager.Mode.PickerMenu &&
-            MainManager.Instance.mode != MainManager.Mode.PropertiesMenu)
+        if (MainManager.Instance.CurrentMode != MainManager.Mode.Building &&
+            MainManager.Instance.CurrentMode != MainManager.Mode.WorkspaceMenu &&
+            MainManager.Instance.CurrentMode != MainManager.Mode.PickerMenu &&
+            MainManager.Instance.CurrentMode != MainManager.Mode.PropertiesMenu)
             return;
 
         if (obj.button == ControllerConfig.LB)
@@ -53,11 +53,11 @@ public class MenuManager : Singleton<MenuManager>
         if (state == true)
         {
             if (menu == objectPicker)
-                MainManager.Instance.mode = MainManager.Mode.PickerMenu;
+                MainManager.Instance.CurrentMode = MainManager.Mode.PickerMenu;
             else if (menu == workspaceMenu)
-                MainManager.Instance.mode = MainManager.Mode.WorkspaceMenu;
+                MainManager.Instance.CurrentMode = MainManager.Mode.WorkspaceMenu;
             else if (menu == propertiesMenu)
-                MainManager.Instance.mode = MainManager.Mode.PropertiesMenu;
+                MainManager.Instance.CurrentMode = MainManager.Mode.PropertiesMenu;
 
             Selectable firstSelectable = menu.GetComponentInChildren<Selectable>();
             if(firstSelectable != null)
@@ -67,8 +67,10 @@ public class MenuManager : Singleton<MenuManager>
             }
         }
 
-        if(state == false && (MainManager.Instance.mode == MainManager.Mode.PickerMenu || MainManager.Instance.mode == MainManager.Mode.WorkspaceMenu || MainManager.Instance.mode == MainManager.Mode.PropertiesMenu))
-            MainManager.Instance.mode = MainManager.Mode.Building;
+        if(state == false && (MainManager.Instance.CurrentMode == MainManager.Mode.PickerMenu || 
+            MainManager.Instance.CurrentMode == MainManager.Mode.WorkspaceMenu || 
+            MainManager.Instance.CurrentMode == MainManager.Mode.PropertiesMenu))
+            MainManager.Instance.CurrentMode = MainManager.Mode.Building;
     }
 
 }

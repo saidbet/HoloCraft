@@ -38,8 +38,7 @@ public class InputHandler : Singleton<InputHandler>
     public event Action<KeyPress> keyPress;
 
     bool leftStickUsed;
-    bool rightStickXUsed;
-    bool rightStickYUsed;
+    bool rightStickUsed;
 
     float leftStickX;
     float leftStickY;
@@ -63,7 +62,7 @@ public class InputHandler : Singleton<InputHandler>
     void Update()
     {
         #region UNITY_WSA
-#if UNITY_WSA
+        #if UNITY_WSA
         if (!Application.isEditor)
         {
             controllerInput.Update();
@@ -108,10 +107,10 @@ public class InputHandler : Singleton<InputHandler>
             if (CheckAxis(rightTrigger))
                 keyPress(new KeyPress(ControllerConfig.RIGHTTRIGGER, rightTrigger));
 
+            #region LEFTSTICK
+
             leftStickX = controllerInput.GetAxisLeftThumbstickX();
             leftStickY = controllerInput.GetAxisLeftThumbstickY();
-            rightStickX = controllerInput.GetAxisRightThumbstickX();
-            rightStickY = controllerInput.GetAxisRightThumbstickY();
 
             //continious axis input
             if (CheckAxis(leftStickX))
@@ -161,12 +160,63 @@ public class InputHandler : Singleton<InputHandler>
             }
             else
                 leftStickUsed = false;
+
+            #endregion
+
+            #region RIGHTSTICK
+
+            rightStickX = controllerInput.GetAxisRightThumbstickX();
+            rightStickY = controllerInput.GetAxisRightThumbstickY();
+
+            if (rightStickX > 0.2)
+            {
+                if (!rightStickUsed)
+                {
+                    KeyDown(ControllerConfig.RIGHTSTICKRIGHT);
+                    rightStickUsed = true;
+                }
+            }
+            else if (rightStickX < -0.2)
+            {
+                if (!rightStickUsed)
+                {
+                    KeyDown(ControllerConfig.RIGHTSTICKLEFT);
+                    rightStickUsed = true;
+                }
+            }
+            else if (rightStickY > 0.2)
+            {
+                if (!rightStickUsed)
+                {
+                    KeyDown(ControllerConfig.RIGHTSTICKUP);
+                    rightStickUsed = true;
+                }
+            }
+            else if (rightStickY < -0.2)
+            {
+                if (!rightStickUsed)
+                {
+                    KeyDown(ControllerConfig.RIGHTSTICKDOWN);
+                    rightStickUsed = true;
+                }
+            }
+            else
+                rightStickUsed = false;
+
+            if (CheckAxis(rightStickX))
+                keyPress(new KeyPress(ControllerConfig.RIGHTSTICKX, rightStickX));
+
+            if (CheckAxis(rightStickY))
+                keyPress(new KeyPress(ControllerConfig.RIGHTSTICKY, rightStickY));
+
+            #endregion
         }
-#endif
+
+        #endif
         #endregion
 
         #region UNITY_EDITOR
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
 
         if (Input.GetKeyDown(KeyCode.JoystickButton0))
             KeyDown(ControllerConfig.A);
@@ -191,6 +241,9 @@ public class InputHandler : Singleton<InputHandler>
             KeyUp(ControllerConfig.LB);
         if (Input.GetKeyUp(KeyCode.JoystickButton5))
             KeyUp(ControllerConfig.RB);
+
+
+        #region DPAD
 
         dpadX = Input.GetAxisRaw("DpadHoriz");
         dpadY = Input.GetAxisRaw("DpadVert");
@@ -230,11 +283,12 @@ public class InputHandler : Singleton<InputHandler>
         else
             dpadUsed = false;
 
+        #endregion
+
+        #region LEFTAXIS
 
         leftStickX = Input.GetAxis("LeftStickHoriz");
         leftStickY = Input.GetAxis("LeftStickVert");
-        rightStickX = Input.GetAxis("RightStickHoriz");
-        rightStickY = Input.GetAxis("RightStickVert");
 
         //Single input
         if (leftStickX > 0.2)
@@ -278,6 +332,47 @@ public class InputHandler : Singleton<InputHandler>
 
         if (CheckAxis(leftStickY))
             keyPress(new KeyPress(ControllerConfig.LEFTSTICKY, leftStickY));
+        #endregion
+
+        #region RIGHTSTICK
+
+        rightStickX = Input.GetAxis("RightStickHoriz");
+        rightStickY = Input.GetAxis("RightStickVert");
+
+        if (rightStickX > 0.2)
+        {
+            if (!rightStickUsed)
+            {
+                KeyDown(ControllerConfig.RIGHTSTICKRIGHT);
+                rightStickUsed = true;
+            }
+        }
+        else if (rightStickX < -0.2)
+        {
+            if (!rightStickUsed)
+            {
+                KeyDown(ControllerConfig.RIGHTSTICKLEFT);
+                rightStickUsed = true;
+            }
+        }
+        else if (rightStickY > 0.2)
+        {
+            if (!rightStickUsed)
+            {
+                KeyDown(ControllerConfig.RIGHTSTICKUP);
+                rightStickUsed = true;
+            }
+        }
+        else if (rightStickY < -0.2)
+        {
+            if (!rightStickUsed)
+            {
+                KeyDown(ControllerConfig.RIGHTSTICKDOWN);
+                rightStickUsed = true;
+            }
+        }
+        else
+            rightStickUsed = false;
 
         if (CheckAxis(rightStickX))
             keyPress(new KeyPress(ControllerConfig.RIGHTSTICKX, rightStickX));
@@ -285,6 +380,7 @@ public class InputHandler : Singleton<InputHandler>
         if (CheckAxis(rightStickY))
             keyPress(new KeyPress(ControllerConfig.RIGHTSTICKY, rightStickY));
 
+        #endregion
 
         //triggers
         leftTrigger = Input.GetAxis("LeftTrigger");
@@ -295,7 +391,7 @@ public class InputHandler : Singleton<InputHandler>
         if (CheckAxis(rightTrigger))
             keyPress(new KeyPress(ControllerConfig.RIGHTTRIGGER, rightTrigger));
 
-#endif
+        #endif
         #endregion
     }
 

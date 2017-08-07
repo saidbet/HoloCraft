@@ -1,24 +1,26 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class WheelManager : MonoBehaviour {
+public class WheelManager : MonoBehaviour
+{
 
     public WheelCollider wheelCollider;
     public GameObject wheelMesh;
-    public int speed;
+    public float speed;
     private float accelValue;
     private float steerValue;
+    private BlockPropertiesValues props;
 
     //Configurable options
     public bool steerable;
     public bool oppositeDirection;
 
-    void Start ()
+    void Start()
     {
+        props = GetComponent<BlockPropertiesValues>();
+        //speed = props.properties.Find(prop => prop.property == Properties.Speed).value;
+        speed = 40;
         InputHandler.Instance.keyPress += Instance_keyPress;
-        if(oppositeDirection == true)
+        if (oppositeDirection == true)
         {
             speed = -speed;
         }
@@ -33,7 +35,7 @@ public class WheelManager : MonoBehaviour {
             Accelerate();
         }
 
-        if(steerValue != 0)
+        if (steerValue != 0)
         {
             accelValue = 0;
             Accelerate();
