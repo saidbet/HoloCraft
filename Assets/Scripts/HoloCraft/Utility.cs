@@ -1,4 +1,6 @@
-﻿public static class Utility
+﻿using UnityEngine;
+
+public static class Utility
 {
     public static float Round(float nbr)
     {
@@ -18,5 +20,18 @@
         {
             return 0;
         }
+    }
+
+    public static Vector3[] FindAdjacentPos(Vector3 position)
+    {
+        Vector3[] res = new Vector3[6];
+        res[0] = new Vector3(position.x + 1, position.y, position.z);
+        res[1] = new Vector3(position.x - 1, position.y, position.z);
+        res[2] = new Vector3(position.x, position.y + 1, position.z);
+        res[3] = new Vector3(position.x, position.y - 1, position.z);
+        res[4] = new Vector3(position.x, position.y, position.z + 1);
+        res[5] = new Vector3(position.x, position.y, position.z - 1);
+
+        return res;
     }
 }

@@ -325,24 +325,35 @@ public class MainManager : Singleton<MainManager>
         Destroy(currentObject.gameObject);
         CurrentMode = Mode.Playing;
 
-        GameObject fb = Instantiate(firstBlock.type.playPrefab, firstBlock.transform.parent);
-        fb.transform.localPosition = firstBlock.transform.localPosition;
-        firstBlock.gameObject.SetActive(false);
-        Destroy(fb.GetComponent<FixedJoint>());
-        Rigidbody rb = fb.GetComponent<Rigidbody>();
-
         foreach (var blk in creation.creationDict)
         {
-            if (blk.Value == firstBlock) continue;
-            GameObject instance = Instantiate(blk.Value.type.playPrefab, blk.Value.transform.parent);
-            instance.GetComponent<BlockPropertiesValues>().properties = blk.Value.GetComponent<BlockPropertiesValues>().properties;
-            blk.Value.gameObject.SetActive(false);
-            instance.transform.localPosition = blk.Key;
-            instance.transform.localRotation = blk.Value.transform.localRotation;
-            instance.GetComponent<FixedJoint>().connectedBody = rb;
+            blk.Value.EnsureComponent<Rigidbody>();
+            FindAdjacents(blk.Key, blk.Value.gameObject);
         }
 
         workspaceController.GetComponent<WorkspaceController>().ToggleVisual(false);
 
+    }
+
+    public void FindAdjacents(Vector3 position, GameObject currentBlock)
+    {
+        Vector3[] adjacentPos = Utility.FindAdjacentPos(position);
+        Block foundBlock = null;
+
+        for (int i = 0; i < adjacentPos.Length; i++)
+        {
+            foundBlock = creation.GetBlock(adjacentPos[i]);
+            if (foundBlock != null)
+                Join(currentBlock, foundBlock.gameObject);
+        }
+    }
+
+    public void Join(GameObject first, GameObject second)
+    {
+        FixedJoint fixedJoint = first.AddComponent<FixedJoint>();
+        Rigidbody secondRb = second.EnsureComponent<Rigidbody>();
+        fixedJoint.connectedBody = secondRb;
+        fixedJoint.breakForce = 500;
+        fixedJoint.breakTorque = 500;
     }
 }
