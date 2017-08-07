@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using HoloToolkit.Unity;
 
-public class WheelManager : MonoBehaviour
+public class WheelManager : MonoBehaviour, IPlayable
 {
-
     public WheelCollider wheelCollider;
     public GameObject wheelMesh;
     public float speed;
@@ -16,9 +17,6 @@ public class WheelManager : MonoBehaviour
 
     void Start()
     {
-        props = GetComponent<BlockPropertiesValues>();
-        //speed = props.properties.Find(prop => prop.property == Properties.Speed).value;
-        speed = 40;
         InputHandler.Instance.keyPress += Instance_keyPress;
         if (oppositeDirection == true)
         {
@@ -28,7 +26,11 @@ public class WheelManager : MonoBehaviour
 
     private void Update()
     {
-        if (MainManager.Instance.CurrentMode != MainManager.Mode.Playing) return;
+        if (MainManager.Instance.CurrentMode != MainManager.Mode.Playing || wheelCollider == null)
+        {
+            Debug.Log("WheelCollider is null");
+            return;
+        }
 
         UpdateMeshePosition();
         if (accelValue != 0)
@@ -55,7 +57,13 @@ public class WheelManager : MonoBehaviour
 
     private void Instance_keyPress(KeyPress obj)
     {
-        if (MainManager.Instance.CurrentMode != MainManager.Mode.Playing) return;
+        if (MainManager.Instance.CurrentMode != MainManager.Mode.Playing || wheelCollider == null)
+        {
+            Debug.Log("wheelCollider is null " + this);
+            return;
+        }
+
+        Debug.Log(this.name +" "+ wheelCollider);
 
         if (obj.button == ControllerConfig.RIGHTTRIGGER)
         {
@@ -82,5 +90,42 @@ public class WheelManager : MonoBehaviour
     private void Steer()
     {
         wheelCollider.steerAngle = steerValue * 45;
+    }
+
+    public void Startplay()
+    {
+        Rigidbody rb = this.gameObject.EnsureComponent<Rigidbody>();
+        props = GetComponent<BlockPropertiesValues>();
+        if(props != null)
+        {
+            speed = Utility.GetPropValue(props, Properties.Speed);
+            steerable = Utility.GetBoolValue(props, Properties.Steerable);
+            oppositeDirection = Utility.GetBoolValue(props, Properties.Direction);
+        }
+    }
+
+    public void SetWheelParameters()
+    {
+        wheelCollider.mass = 1;
+
+        var spring = new JointSpring();
+        spring.damper = 4.5f;
+        spring.spring = 35;
+        spring.targetPosition = 0;
+        wheelCollider.suspensionSpring = spring;
+
+        var frictionCurve = new WheelFrictionCurve();
+        frictionCurve.extremumSlip = 0.4f;
+        frictionCurve.extremumValue = 1;
+        frictionCurve.asymptoteSlip = 0.8f;
+        frictionCurve.asymptoteValue = 0.5f;
+        frictionCurve.stiffness = 10;
+        wheelCollider.forwardFriction = frictionCurve;
+        wheelCollider.sidewaysFriction = frictionCurve;
+    }
+
+    private void OnDestroy()
+    {
+        InputHandler.Instance.keyPress -= Instance_keyPress;
     }
 }

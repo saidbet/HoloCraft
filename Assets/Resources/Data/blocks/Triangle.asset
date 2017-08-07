@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Name: Triangle
   m_EditorClassIdentifier: 
   blockType: 1
-  buildPrefab: {fileID: 1293074538579858, guid: 47a61a4e19360d04b933287bcfe281c7,
-    type: 2}
-  playPrefab: {fileID: 1621894154117412, guid: 5e167fef7579d9d4586faca6423880e9, type: 2}
+  prefab: {fileID: 1624944461415212, guid: a4891fb2a4309cf49a15f879bbe991b0, type: 2}
   thumbnail: {fileID: 21300000, guid: a4868c065db873b4393e47b33956fab2, type: 3}
   properties:
   - property: 0

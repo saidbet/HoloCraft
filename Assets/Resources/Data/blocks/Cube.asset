@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Name: Cube
   m_EditorClassIdentifier: 
   blockType: 0
-  buildPrefab: {fileID: 1164122981679186, guid: 7e994c80524225e45a2bb4a6b7290545,
-    type: 2}
-  playPrefab: {fileID: 1445700576734932, guid: 70f6385e4636a8d4f99e0c2c002d34ca, type: 2}
+  prefab: {fileID: 1539388151553278, guid: 21a90f910df57144d9ad735e8edc9e8f, type: 2}
   thumbnail: {fileID: 21300000, guid: 3458d9bcac51afa4f993c208fd795a91, type: 3}
   properties:
   - property: 0

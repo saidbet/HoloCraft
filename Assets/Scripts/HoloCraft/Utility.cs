@@ -34,4 +34,22 @@ public static class Utility
 
         return res;
     }
+
+    public static bool ToBool(float nbr)
+    {
+        if (nbr == 0)
+            return false;
+        else
+            return true;
+    }
+
+    public static float GetPropValue(BlockPropertiesValues props, Properties property)
+    {
+        return props.properties.Find(prop => prop.property == property).value;
+    }
+
+    public static bool GetBoolValue(BlockPropertiesValues props, Properties property)
+    {
+        return ToBool(props.properties.Find(prop => prop.property == property).value);
+    }
 }

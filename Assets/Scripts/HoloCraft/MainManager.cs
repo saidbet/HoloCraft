@@ -329,6 +329,9 @@ public class MainManager : Singleton<MainManager>
         {
             blk.Value.EnsureComponent<Rigidbody>();
             FindAdjacents(blk.Key, blk.Value.gameObject);
+            IPlayable playable = blk.Value.GetComponent<IPlayable>();
+            if(playable != null)
+                playable.Startplay();
         }
 
         workspaceController.GetComponent<WorkspaceController>().ToggleVisual(false);
