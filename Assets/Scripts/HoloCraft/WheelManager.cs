@@ -13,15 +13,23 @@ public class WheelManager : MonoBehaviour, IPlayable
 
     //Configurable options
     public bool steerable;
-    public bool oppositeDirection;
+    public bool _oppositeDirection;
+
+    public bool OppositeDirection
+    {
+        get {return _oppositeDirection;}
+        set
+        {
+            if (value == true && speed > 0)
+                speed = -speed;
+            else if (value == false && speed < 0)
+                speed = -speed;
+        }
+    }
 
     void Start()
     {
         InputHandler.Instance.keyPress += Instance_keyPress;
-        if (oppositeDirection == true)
-        {
-            speed = -speed;
-        }
     }
 
     private void Update()
@@ -44,6 +52,11 @@ public class WheelManager : MonoBehaviour, IPlayable
             accelValue = 0;
             Accelerate();
         }
+
+        if (OppositeDirection == true && speed > 0)
+            speed = -speed;
+        else if (OppositeDirection == false && speed < 0)
+            speed = -speed;
     }
 
     private void UpdateMeshePosition()
@@ -100,7 +113,7 @@ public class WheelManager : MonoBehaviour, IPlayable
         {
             speed = Utility.GetPropValue(props, Properties.Speed);
             steerable = Utility.GetBoolValue(props, Properties.Steerable);
-            oppositeDirection = Utility.GetBoolValue(props, Properties.Direction);
+            OppositeDirection = Utility.GetBoolValue(props, Properties.Direction);
         }
     }
 

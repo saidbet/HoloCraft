@@ -8,14 +8,17 @@ using UnityEngine.SceneManagement;
 
 public class test : MonoBehaviour
 {
-    public WheelManager wheelManager;
+    public List<WheelManager> wheelManager;
 
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.A))
         {
-            MainManager.Instance.CurrentMode = MainManager.Mode.Playing;
-            wheelManager.Startplay();
+            foreach(WheelManager wheel in wheelManager)
+            {
+                wheel.Startplay();
+            }
         }
+        MainManager.Instance.CurrentMode = MainManager.Mode.Playing;
     }
 }
