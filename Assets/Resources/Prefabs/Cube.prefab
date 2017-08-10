@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4833533799443732}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SnapPoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 65972815432916136}
   - component: {fileID: 114300918578421078}
   - component: {fileID: 54969208735612122}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SnapPoint
   m_TagString: SnapPoint
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 65969242782300156}
   - component: {fileID: 114650125930465534}
   - component: {fileID: 54202249513455432}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SnapPoint (1)
   m_TagString: SnapPoint
   m_Icon: {fileID: 0}
@@ -72,7 +72,8 @@ GameObject:
   - component: {fileID: 4523759471583048}
   - component: {fileID: 114959751739264420}
   - component: {fileID: 114521653228758556}
-  m_Layer: 0
+  - component: {fileID: 54838080319420344}
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +91,7 @@ GameObject:
   - component: {fileID: 65742030155301004}
   - component: {fileID: 114570837392235162}
   - component: {fileID: 54714911261428182}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SnapPoint (2)
   m_TagString: SnapPoint
   m_Icon: {fileID: 0}
@@ -106,7 +107,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4142614769412410}
   - component: {fileID: 65073356768171280}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +125,7 @@ GameObject:
   - component: {fileID: 65994226326218088}
   - component: {fileID: 114937105021603142}
   - component: {fileID: 54277734026156718}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SnapPoint (3)
   m_TagString: SnapPoint
   m_Icon: {fileID: 0}
@@ -141,7 +142,7 @@ GameObject:
   - component: {fileID: 4331426869360626}
   - component: {fileID: 33875524514939508}
   - component: {fileID: 23686689995189732}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: CubeMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,7 +160,7 @@ GameObject:
   - component: {fileID: 65450819782555654}
   - component: {fileID: 114236527242553170}
   - component: {fileID: 54913356652843830}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SnapPoint (4)
   m_TagString: SnapPoint
   m_Icon: {fileID: 0}
@@ -177,7 +178,7 @@ GameObject:
   - component: {fileID: 65443131192718970}
   - component: {fileID: 114888128484058818}
   - component: {fileID: 54984342929804496}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SnapPoint (5)
   m_TagString: SnapPoint
   m_Icon: {fileID: 0}
@@ -407,6 +408,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!54 &54838080319420344
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1539388151553278}
+  serializedVersion: 2
+  m_Mass: 10
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!54 &54913356652843830
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -462,7 +478,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.9, y: 0.9, z: 0.9}
+  m_Size: {x: 0.79999995, y: 0.79999995, z: 0.79999995}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &65443131192718970
 BoxCollider:

@@ -847,7 +847,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 835d96cd4e945664bb6467cef0990280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallPrefab: {fileID: 1874984680419432, guid: 90d5fbffe367c744099679e03ecc6a68, type: 2}
+  wallPrefab: {fileID: 0}
   spatialMappingManager: {fileID: 114332050115896548}
   minimumWalls: 1
   wallAngleThreshold: 10
@@ -878,14 +878,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5757c147f448e4e931430747ad99ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  workspacePrefab: {fileID: 1433140767404046, guid: eaab76739bb49c741b0b35bc181deadf,
+  workspacePrefab: {fileID: 1872719907205080, guid: 2ed3fc8934f02b94ea45ee38a2b7b7b2,
     type: 2}
-  validMat: {fileID: 0}
-  invalidMat: {fileID: 0}
-  objectToPlace: {fileID: 1894890794699004, guid: c77abf63d1fe05e449b0ab1cf1fe10cc,
+  workspaceHolder: {fileID: 0}
+  objectToPlace: {fileID: 1539388151553278, guid: 21a90f910df57144d9ad735e8edc9e8f,
     type: 2}
+  _hoveredObject: {fileID: 0}
+  firstBlock: {fileID: 0}
   creation: {fileID: 0}
-  mode: 0
 --- !u!114 &114357084161403920
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -968,6 +968,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4610314bcad32c84f93dfab792039ac7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wheelManager:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &114482579473635944
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1191,8 +1196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ActivePlanes: []
-  SurfacePlanePrefab: {fileID: 1874984680419432, guid: 90d5fbffe367c744099679e03ecc6a68,
-    type: 2}
+  SurfacePlanePrefab: {fileID: 0}
   MinArea: 0.024999999
   drawPlanesMask: 0
   destroyPlanesMask: 16

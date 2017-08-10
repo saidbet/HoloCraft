@@ -14,11 +14,8 @@ public class test : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.A))
         {
-            foreach(WheelManager wheel in wheelManager)
-            {
-                wheel.Startplay();
-            }
+            MainManager.Instance.CurrentMode = MainManager.Mode.Playing;
+
         }
-        MainManager.Instance.CurrentMode = MainManager.Mode.Playing;
     }
 }

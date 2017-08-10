@@ -325,11 +325,19 @@ public class MainManager : Singleton<MainManager>
         Destroy(currentObject.gameObject);
         CurrentMode = Mode.Playing;
 
+        Transform parent = new GameObject().transform;
+
         foreach (var blk in creation.creationDict)
         {
-            blk.Value.EnsureComponent<Rigidbody>();
-            FindAdjacents(blk.Key, blk.Value.gameObject);
+
+            blk.Value.transform.SetParent(parent.transform);
+            blk.Value.transform.localScale = Vector3.one;
+
+            //FindAdjacents(blk.Key, blk.Value.gameObject);
+
+            //blk.Value.GetComponent<Rigidbody>().isKinematic = false;
             IPlayable playable = blk.Value.GetComponent<IPlayable>();
+
             if(playable != null)
                 playable.Startplay();
         }
@@ -338,7 +346,8 @@ public class MainManager : Singleton<MainManager>
 
     }
 
-    public void FindAdjacents(Vector3 position, GameObject currentBlock)
+
+    private void FindAdjacents(Vector3 position, GameObject currentBlock)
     {
         Vector3[] adjacentPos = Utility.FindAdjacentPos(position);
         Block foundBlock = null;
@@ -347,16 +356,18 @@ public class MainManager : Singleton<MainManager>
         {
             foundBlock = creation.GetBlock(adjacentPos[i]);
             if (foundBlock != null)
+            {
                 Join(currentBlock, foundBlock.gameObject);
+            }
         }
     }
 
-    public void Join(GameObject first, GameObject second)
+    private void Join(GameObject first, GameObject second)
     {
         FixedJoint fixedJoint = first.AddComponent<FixedJoint>();
         Rigidbody secondRb = second.EnsureComponent<Rigidbody>();
         fixedJoint.connectedBody = secondRb;
-        fixedJoint.breakForce = 500;
-        fixedJoint.breakTorque = 500;
+        fixedJoint.breakForce = 9999;
+        fixedJoint.breakTorque = 9999;
     }
 }

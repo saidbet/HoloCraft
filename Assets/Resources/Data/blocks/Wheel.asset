@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Wheel
   m_EditorClassIdentifier: 
   blockType: 2
-  prefab: {fileID: 1761022240439558, guid: 3dc50153a80482b4791e2aa1e7e76510, type: 2}
+  prefab: {fileID: 1662570185996376, guid: 3dc50153a80482b4791e2aa1e7e76510, type: 2}
   thumbnail: {fileID: 21300000, guid: 812f80bfdc6ff964f814c6a184614689, type: 3}
   properties:
   - property: 0
