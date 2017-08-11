@@ -1,6 +1,7 @@
 ﻿using HoloToolkit.Sharing.Spawning;
 using HoloToolkit.Unity;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MainManager : Singleton<MainManager>
@@ -18,9 +19,7 @@ public class MainManager : Singleton<MainManager>
     public enum Mode
     {
         Building,
-        PickerMenu,
-        WorkspaceMenu,
-        PropertiesMenu,
+        InMenu,
         Moving,
         Scaling,
         Playing
@@ -46,6 +45,8 @@ public class MainManager : Singleton<MainManager>
     private Quaternion previousRot;
 
     private float timer;
+
+    public List<BlockType> listOfBlocks = new List<BlockType>();
 
     //Current mode
     private Mode _currentMode;
@@ -173,7 +174,7 @@ public class MainManager : Singleton<MainManager>
         if (obj.button == ControllerConfig.A)
         {
             if (creation.GetBlock(currentPosition) == null)
-                Validate();
+                Validate(currentPosition, currentObject.gameObject);
         }
         if (obj.button == ControllerConfig.B)
         {
@@ -199,11 +200,6 @@ public class MainManager : Singleton<MainManager>
 
     private void PlaceNext()
     {
-        if (currentObject != null)
-        {
-            Destroy(currentObject.gameObject);
-        }
-
         currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspaceHolder).GetComponent<Block>();
         currentObject.transform.localPosition = currentPosition;
         currentObject.transform.localRotation = previousRot;
@@ -211,15 +207,14 @@ public class MainManager : Singleton<MainManager>
         CheckValid();
     }
 
-    public void Validate()
+    public void Validate(Vector3 position, GameObject block)
     {
         if (_isValid == false) return;
 
-        previousRot = currentObject.transform.localRotation;
-        creation.AddToDict(currentPosition, currentObject);
-        currentObject.GetComponent<Block>().RestoreDefaultColor();
-        currentObject.GetComponent<Block>().DisableSnapPoints();
-        currentObject = null;
+        previousRot = block.transform.localRotation;
+        creation.AddToDict(position, block.GetComponent<Block>());
+        block.GetComponent<Block>().RestoreDefaultColor();
+        block.GetComponent<Block>().DisableSnapPoints();
         PlaceNext();
     }
 
@@ -331,11 +326,11 @@ public class MainManager : Singleton<MainManager>
         {
 
             blk.Value.transform.SetParent(parent.transform);
-            blk.Value.transform.localScale = Vector3.one;
+            //blk.Value.transform.localScale = Vector3.one;
 
-            //FindAdjacents(blk.Key, blk.Value.gameObject);
+            FindAdjacents(blk.Key, blk.Value.gameObject);
 
-            //blk.Value.GetComponent<Rigidbody>().isKinematic = false;
+            blk.Value.GetComponent<Rigidbody>().isKinematic = false;
             IPlayable playable = blk.Value.GetComponent<IPlayable>();
 
             if(playable != null)

@@ -11,7 +11,6 @@ public class ObjectPicker : MonoBehaviour
     public GameObject[] guiElements;
     public int nbrElementsPerLine;
     public int elementSize;
-    public HighlightManager highlight;
 
     private void Awake()
     {
@@ -34,7 +33,7 @@ public class ObjectPicker : MonoBehaviour
     {
         guiElements[index] = Instantiate(elementPrefab, transform);
         guiElements[index].GetComponent<RectTransform>().anchoredPosition = GetValidPosition(index);
-        guiElements[index].GetComponent<BlockHolder>().blockType = blocksArray.array[index];
+        guiElements[index].GetComponent<ObjectPickerOnSubmit>().blockType = blocksArray.array[index];
     }
 
     protected Vector2 GetValidPosition(int index)
@@ -45,5 +44,4 @@ public class ObjectPicker : MonoBehaviour
 
         return new Vector2(x * elementSize, -y * elementSize);
     }
-
 }

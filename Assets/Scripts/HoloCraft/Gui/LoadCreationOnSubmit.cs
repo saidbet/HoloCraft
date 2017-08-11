@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ObjectPickerOnSubmit : EventTrigger {
+public class LoadCreationOnSubmit : EventTrigger {
 
-    public BlockType blockType;
+    public string creationName;
 
     public override void OnSubmit(BaseEventData eventData)
     {
-        MainManager.Instance.ChangeObject(blockType.prefab);
+        MainManager.Instance.creation.LoadCreation(creationName);
     }
 }

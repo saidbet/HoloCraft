@@ -8,14 +8,18 @@ using UnityEngine.SceneManagement;
 
 public class test : MonoBehaviour
 {
-    public List<WheelManager> wheelManager;
 
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.A))
         {
             MainManager.Instance.CurrentMode = MainManager.Mode.Playing;
+        }
 
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            Debug.Log(MainManager.Instance.creation.creationsList.nbrCreations);
+            Debug.Log(MainManager.Instance.creation.creationsList.creations.Count);
         }
     }
 }

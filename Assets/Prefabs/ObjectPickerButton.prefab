@@ -40,7 +40,6 @@ GameObject:
   - component: {fileID: 114538625363526914}
   - component: {fileID: 114707000143688558}
   - component: {fileID: 114608258638936948}
-  - component: {fileID: 114823945993882350}
   m_Layer: 2
   m_Name: ObjectPickerButton
   m_TagString: Untagged
@@ -151,18 +150,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114823945993882350
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1602015559163190}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d686935324f4c3140b93751518fdeff5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  blockType: {fileID: 0}
 --- !u!222 &222247748735178058
 CanvasRenderer:
   m_ObjectHideFlags: 1

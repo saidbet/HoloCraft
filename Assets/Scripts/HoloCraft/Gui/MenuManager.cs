@@ -22,42 +22,25 @@ public class MenuManager : Singleton<MenuManager>
     private void Instance_keyPress(KeyPress obj)
     {
         if (MainManager.Instance.CurrentMode != MainManager.Mode.Building &&
-            MainManager.Instance.CurrentMode != MainManager.Mode.WorkspaceMenu &&
-            MainManager.Instance.CurrentMode != MainManager.Mode.PickerMenu &&
-            MainManager.Instance.CurrentMode != MainManager.Mode.PropertiesMenu)
+            MainManager.Instance.CurrentMode != MainManager.Mode.InMenu)
             return;
 
         if (obj.button == ControllerConfig.LB)
-        {
-            if (obj.type == KeyPress.DOWN)
-                ToggleMenu(workspaceMenu, true);
-            else if (obj.type == KeyPress.UP)
-                ToggleMenu(workspaceMenu, false);
-        }
+            ToggleMenu(workspaceMenu);
 
         if (obj.button == ControllerConfig.RB)
-        {
-            if (obj.type == KeyPress.DOWN)
-                ToggleMenu(objectPicker, true);
-            else if (obj.type == KeyPress.UP)
-                ToggleMenu(objectPicker, false);
-        }
+            ToggleMenu(objectPicker);
 
         if (obj.button == ControllerConfig.LEFTSTICK)
-                ToggleMenu(propertiesMenu, !propertiesMenu.activeSelf);
+            ToggleMenu(propertiesMenu);
     }
 
-    public void ToggleMenu(GameObject menu, bool state)
+    public void ToggleMenu(GameObject menu)
     {
-        menu.SetActive(state);
-        if (state == true)
+        menu.SetActive(!menu.activeSelf);
+        if (menu.activeSelf == true)
         {
-            if (menu == objectPicker)
-                MainManager.Instance.CurrentMode = MainManager.Mode.PickerMenu;
-            else if (menu == workspaceMenu)
-                MainManager.Instance.CurrentMode = MainManager.Mode.WorkspaceMenu;
-            else if (menu == propertiesMenu)
-                MainManager.Instance.CurrentMode = MainManager.Mode.PropertiesMenu;
+            MainManager.Instance.CurrentMode = MainManager.Mode.InMenu;
 
             Selectable firstSelectable = menu.GetComponentInChildren<Selectable>();
             if(firstSelectable != null)
@@ -67,9 +50,7 @@ public class MenuManager : Singleton<MenuManager>
             }
         }
 
-        if(state == false && (MainManager.Instance.CurrentMode == MainManager.Mode.PickerMenu || 
-            MainManager.Instance.CurrentMode == MainManager.Mode.WorkspaceMenu || 
-            MainManager.Instance.CurrentMode == MainManager.Mode.PropertiesMenu))
+        if(menu.activeSelf == false && MainManager.Instance.CurrentMode == MainManager.Mode.InMenu)
             MainManager.Instance.CurrentMode = MainManager.Mode.Building;
     }
 
