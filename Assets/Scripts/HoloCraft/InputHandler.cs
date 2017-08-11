@@ -3,403 +3,66 @@ using HoloToolkit.Unity;
 using System;
 using UnityEngine;
 
-public class KeyPress
-{
-    public const int AXIS = 0;
-    public const int DOWN = 1;
-    public const int UP = 2;
-
-    public int button;
-    public int type;
-    public float value;
-
-    public KeyPress(int button, int type)
-    {
-        this.button = button;
-        this.type = type;
-        this.value = 0;
-    }
-
-    public KeyPress(int button, float value)
-    {
-        this.button = button;
-        this.value = value;
-        this.type = 0;
-    }
-}
-
-public class InputHandler : Singleton<InputHandler>
+public class InputHandler : MonoBehaviour
 {
 
     private ControllerInput controllerInput;
 
-    public event Action<KeyPress> keyPress;
-
-    bool leftStickUsed;
-    bool rightStickUsed;
-
-    float leftStickX;
-    float leftStickY;
-    float rightStickX;
-    float rightStickY;
-
-    float leftTrigger;
-    float rightTrigger;
-
-    //only in unity editor
-    float dpadX;
-    float dpadY;
-    bool dpadUsed;
-
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
         controllerInput = new ControllerInput(0, 0.10f);
     }
 
     void Update()
     {
-        #region UNITY_WSA
+        controllerInput.Update();
+
 #if UNITY_WSA
-        if (!Application.isEditor)
-        {
-
-            controllerInput.Update();
-            if (controllerInput.GetButtonDown(ControllerButton.A))
-                KeyDown(ControllerConfig.A);
-            if (controllerInput.GetButtonDown(ControllerButton.B))
-                KeyDown(ControllerConfig.B);
-            if (controllerInput.GetButtonDown(ControllerButton.X))
-                KeyDown(ControllerConfig.X);
-            if (controllerInput.GetButtonDown(ControllerButton.Y))
-                KeyDown(ControllerConfig.Y);
-
-            if (controllerInput.GetButtonDown(ControllerButton.LeftShoulder))
-                KeyDown(ControllerConfig.LB);
-            if (controllerInput.GetButtonDown(ControllerButton.RightShoulder))
-                KeyDown(ControllerConfig.RB);
-
-            if (controllerInput.GetButtonDown(ControllerButton.RightThumbstick))
-                KeyDown(ControllerConfig.RIGHTSTICK);
-            if (controllerInput.GetButtonDown(ControllerButton.LeftThumbstick))
-                KeyDown(ControllerConfig.LEFTSTICK);
-
-            if (controllerInput.GetButtonDown(ControllerButton.DPadUp))
-                KeyDown(ControllerConfig.UP);
-            if (controllerInput.GetButtonDown(ControllerButton.DPadDown))
-                KeyDown(ControllerConfig.DOWN);
-            if (controllerInput.GetButtonDown(ControllerButton.DPadRight))
-                KeyDown(ControllerConfig.RIGHT);
-            if (controllerInput.GetButtonDown(ControllerButton.DPadLeft))
-                KeyDown(ControllerConfig.LEFT);
-
-            if (controllerInput.GetButtonUp(ControllerButton.LeftShoulder))
-                KeyUp(ControllerConfig.LB);
-            if (controllerInput.GetButtonUp(ControllerButton.RightShoulder))
-                KeyUp(ControllerConfig.RB);
-
-            leftTrigger = controllerInput.GetAxisLeftTrigger();
-            rightTrigger = controllerInput.GetAxisRightTrigger();
-
-            if (CheckAxis(leftTrigger))
-                keyPress(new KeyPress(ControllerConfig.LEFTTRIGGER, leftTrigger));
-            if (CheckAxis(rightTrigger))
-                keyPress(new KeyPress(ControllerConfig.RIGHTTRIGGER, rightTrigger));
-
-            #region LEFTSTICK
-
-            leftStickX = controllerInput.GetAxisLeftThumbstickX();
-            leftStickY = controllerInput.GetAxisLeftThumbstickY();
-
-            //Single input
-            if (leftStickX > 0.2)
-            {
-                if (!leftStickUsed)
-                {
-                    KeyDown(ControllerConfig.LEFTSTICKRIGHT);
-                    leftStickUsed = true;
-                    InfoDisplay.Instance.UpdateText("leftstickright");
-                }
-            }
-            else if (leftStickX < -0.2)
-            {
-                if (!leftStickUsed)
-                {
-                    KeyDown(ControllerConfig.LEFTSTICKLEFT);
-                    leftStickUsed = true;
-                    InfoDisplay.Instance.UpdateText("leftstickleft");
-                }
-            }
-            else if (leftStickY > 0.2)
-            {
-                if (!leftStickUsed)
-                {
-                    KeyDown(ControllerConfig.LEFTSTICKUP);
-                    leftStickUsed = true;
-                }
-            }
-            else if (leftStickY < -0.2)
-            {
-                if (!leftStickUsed)
-                {
-                    KeyDown(ControllerConfig.LEFTSTICKDOWN);
-                    leftStickUsed = true;
-                }
-            }
-            else
-                leftStickUsed = false;
-
-            //continious axis input
-            if (CheckAxis(leftStickX))
-                keyPress(new KeyPress(ControllerConfig.LEFTSTICKX, leftStickX));
-
-            if (CheckAxis(leftStickY))
-                keyPress(new KeyPress(ControllerConfig.LEFTSTICKY, leftStickY));
-
-            #endregion
-
-            #region RIGHTSTICK
-
-            rightStickX = controllerInput.GetAxisRightThumbstickX();
-            rightStickY = controllerInput.GetAxisRightThumbstickY();
-
-            if (rightStickX > 0.2)
-            {
-                if (!rightStickUsed)
-                {
-                    KeyDown(ControllerConfig.RIGHTSTICKRIGHT);
-                    rightStickUsed = true;
-                }
-            }
-            else if (rightStickX < -0.2)
-            {
-                if (!rightStickUsed)
-                {
-                    KeyDown(ControllerConfig.RIGHTSTICKLEFT);
-                    rightStickUsed = true;
-                }
-            }
-            else if (rightStickY > 0.2)
-            {
-                if (!rightStickUsed)
-                {
-                    KeyDown(ControllerConfig.RIGHTSTICKUP);
-                    rightStickUsed = true;
-                }
-            }
-            else if (rightStickY < -0.2)
-            {
-                if (!rightStickUsed)
-                {
-                    KeyDown(ControllerConfig.RIGHTSTICKDOWN);
-                    rightStickUsed = true;
-                }
-            }
-            else
-                rightStickUsed = false;
-
-            if (CheckAxis(rightStickX))
-                keyPress(new KeyPress(ControllerConfig.RIGHTSTICKX, rightStickX));
-
-            if (CheckAxis(rightStickY))
-                keyPress(new KeyPress(ControllerConfig.RIGHTSTICKY, rightStickY));
-
-            #endregion
-        }
 
 #endif
-        #endregion
 
-        #region UNITY_EDITOR
 #if UNITY_EDITOR
+        CInput.aDown = Input.GetKeyDown(KeyCode.JoystickButton0);
+        CInput.aUp = Input.GetKeyUp(KeyCode.JoystickButton0);
+        CInput.aHold = Input.GetKey(KeyCode.JoystickButton0);
 
-        if (Input.GetKeyDown(KeyCode.JoystickButton0))
-            KeyDown(ControllerConfig.A);
-        if (Input.GetKeyDown(KeyCode.JoystickButton1))
-            KeyDown(ControllerConfig.B);
-        if (Input.GetKeyDown(KeyCode.JoystickButton2))
-            KeyDown(ControllerConfig.X);
-        if (Input.GetKeyDown(KeyCode.JoystickButton3))
-            KeyDown(ControllerConfig.Y);
+        CInput.bDown = Input.GetKeyDown(KeyCode.JoystickButton1);
+        CInput.bUp = Input.GetKeyUp(KeyCode.JoystickButton1);
+        CInput.bHold = Input.GetKey(KeyCode.JoystickButton1);
 
-        if (Input.GetKeyDown(KeyCode.JoystickButton4))
-            KeyDown(ControllerConfig.LB);
-        if (Input.GetKeyDown(KeyCode.JoystickButton5))
-            KeyDown(ControllerConfig.RB);
+        CInput.xDown = Input.GetKeyDown(KeyCode.JoystickButton2);
+        CInput.xUp = Input.GetKeyUp(KeyCode.JoystickButton2);
+        CInput.xHold = Input.GetKey(KeyCode.JoystickButton2);
 
-        if (Input.GetKeyDown(KeyCode.JoystickButton9))
-            KeyDown(ControllerConfig.RIGHTSTICK);
-        if (Input.GetKeyDown(KeyCode.JoystickButton8))
-            KeyDown(ControllerConfig.LEFTSTICK);
+        CInput.yDown = Input.GetKeyDown(KeyCode.JoystickButton3);
+        CInput.yUp = Input.GetKeyUp(KeyCode.JoystickButton3);
+        CInput.yHold = Input.GetKey(KeyCode.JoystickButton3);
 
+        CInput.lbDown = Input.GetKeyDown(KeyCode.JoystickButton4);
+        CInput.lbUp = Input.GetKeyUp(KeyCode.JoystickButton4);
 
-        #region DPAD
+        CInput.rbDown = Input.GetKeyDown(KeyCode.JoystickButton5);
+        CInput.rbUp = Input.GetKeyUp(KeyCode.JoystickButton5);
 
-        dpadX = Input.GetAxisRaw("DpadHoriz");
-        dpadY = Input.GetAxisRaw("DpadVert");
+        CInput.back = Input.GetKeyDown(KeyCode.JoystickButton6);
 
-        if (dpadY == 1)
-        {
-            if (!dpadUsed)
-            {
-                KeyDown(ControllerConfig.UP);
-                dpadUsed = true;
-            }
-        }
-        else if (dpadY == -1)
-        {
-            if (!dpadUsed)
-            {
-                KeyDown(ControllerConfig.DOWN);
-                dpadUsed = true;
-            }
-        }
-        else if (dpadX == 1)
-        {
-            if (!dpadUsed)
-            {
-                KeyDown(ControllerConfig.RIGHT);
-                dpadUsed = true;
-            }
-        }
-        else if (dpadX == -1)
-        {
-            if (!dpadUsed)
-            {
-                KeyDown(ControllerConfig.LEFT);
-                dpadUsed = true;
-            }
-        }
-        else
-            dpadUsed = false;
+        CInput.start = Input.GetKeyDown(KeyCode.JoystickButton7);
 
-        #endregion
+        CInput.leftStick = Input.GetKeyDown(KeyCode.JoystickButton8);
 
-        #region LEFTAXIS
+        CInput.rightStick = Input.GetKeyDown(KeyCode.JoystickButton9);
 
-        leftStickX = Input.GetAxis("LeftStickHoriz");
-        leftStickY = Input.GetAxis("LeftStickVert");
+        CInput.leftStickX = Input.GetAxis("LeftStickHoriz");
+        CInput.leftStickY = Input.GetAxis("LeftStickVert");
 
-        //Single input
-        if (leftStickX > 0.2)
-        {
-            if (!leftStickUsed)
-            {
-                KeyDown(ControllerConfig.LEFTSTICKRIGHT);
-                leftStickUsed = true;
-            }
-        }
-        else if (leftStickX < -0.2)
-        {
-            if (!leftStickUsed)
-            {
-                KeyDown(ControllerConfig.LEFTSTICKLEFT);
-                leftStickUsed = true;
-            }
-        }
-        else if (leftStickY > 0.2)
-        {
-            if (!leftStickUsed)
-            {
-                KeyDown(ControllerConfig.LEFTSTICKUP);
-                leftStickUsed = true;
-            }
-        }
-        else if (leftStickY < -0.2)
-        {
-            if (!leftStickUsed)
-            {
-                KeyDown(ControllerConfig.LEFTSTICKDOWN);
-                leftStickUsed = true;
-            }
-        }
-        else
-            leftStickUsed = false;
+        CInput.rightStickX = Input.GetAxis("RightStickHoriz");
+        CInput.rightStickY = Input.GetAxis("RightStickVert");
 
-        //Continious axis input
-        if (CheckAxis(leftStickX))
-            keyPress(new KeyPress(ControllerConfig.LEFTSTICKX, leftStickX));
+        CInput.dpadX = Input.GetAxis("DpadHoriz");
+        CInput.dpadY = Input.GetAxis("DpadVert");
 
-        if (CheckAxis(leftStickY))
-            keyPress(new KeyPress(ControllerConfig.LEFTSTICKY, leftStickY));
-        #endregion
-
-        #region RIGHTSTICK
-
-        rightStickX = Input.GetAxis("RightStickHoriz");
-        rightStickY = Input.GetAxis("RightStickVert");
-
-        if (rightStickX > 0.2)
-        {
-            if (!rightStickUsed)
-            {
-                KeyDown(ControllerConfig.RIGHTSTICKRIGHT);
-                rightStickUsed = true;
-            }
-        }
-        else if (rightStickX < -0.2)
-        {
-            if (!rightStickUsed)
-            {
-                KeyDown(ControllerConfig.RIGHTSTICKLEFT);
-                rightStickUsed = true;
-            }
-        }
-        else if (rightStickY > 0.2)
-        {
-            if (!rightStickUsed)
-            {
-                KeyDown(ControllerConfig.RIGHTSTICKUP);
-                rightStickUsed = true;
-            }
-        }
-        else if (rightStickY < -0.2)
-        {
-            if (!rightStickUsed)
-            {
-                KeyDown(ControllerConfig.RIGHTSTICKDOWN);
-                rightStickUsed = true;
-            }
-        }
-        else
-            rightStickUsed = false;
-
-        if (CheckAxis(rightStickX))
-            keyPress(new KeyPress(ControllerConfig.RIGHTSTICKX, rightStickX));
-
-        if (CheckAxis(rightStickY))
-            keyPress(new KeyPress(ControllerConfig.RIGHTSTICKY, rightStickY));
-
-        #endregion
-
-        //triggers
-        leftTrigger = Input.GetAxis("LeftTrigger");
-        rightTrigger = Input.GetAxis("RightTrigger");
-
-        if (CheckAxis(leftTrigger))
-            keyPress(new KeyPress(ControllerConfig.LEFTTRIGGER, leftTrigger));
-        if (CheckAxis(rightTrigger))
-            keyPress(new KeyPress(ControllerConfig.RIGHTTRIGGER, rightTrigger));
-
+        CInput.leftTrigger = Input.GetAxis("LeftTrigger");
+        CInput.rightTrigger = Input.GetAxis("RightTrigger");
 #endif
-        #endregion
-    }
-
-    private void KeyDown(int key)
-    {
-        keyPress(new KeyPress(key, KeyPress.DOWN));
-    }
-
-    private void KeyUp(int key)
-    {
-        keyPress(new KeyPress(key, KeyPress.UP));
-    }
-
-    private bool CheckAxis(float axis)
-    {
-        if (axis > 0.20 || axis < -0.20)
-            return true;
-        else
-            return false;
     }
 }

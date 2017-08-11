@@ -33,26 +33,26 @@ public class PropertiesManager : MonoBehaviour, IMenu
         }
     }
 
-    public void MoveSelection(MainManager.Direction direction)
+    public void MoveSelection(Direction direction)
     {
         switch (direction)
         {
-            case MainManager.Direction.Down:
+            case Direction.Down:
                 if (currentIndex < selectables.Length - 1)
                     currentIndex += 1;
                 break;
 
-            case MainManager.Direction.Up:
+            case Direction.Up:
                 if (currentIndex > 0)
                     currentIndex -= 1;
                 break;
 
-            case MainManager.Direction.Right:
+            case Direction.Right:
                 if (currentIndex < selectables.Length - 1)
                     currentIndex += 1;
                 break;
 
-            case MainManager.Direction.Left:
+            case Direction.Left:
                 if (currentIndex > 0)
                     currentIndex -= 1;
                 break;

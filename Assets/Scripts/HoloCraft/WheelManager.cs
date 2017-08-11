@@ -31,27 +31,22 @@ public class WheelManager : MonoBehaviour, IPlayable
         }
     }
 
-    private void Start()
-    {
-        controllerInput = new ControllerInput(0, 0.10f);
-    }
-
-    private void FixedUpdate()
+    private void Update()
     {
 
         if (MainManager.Instance.CurrentMode != MainManager.Mode.Playing || wheelCollider == null)
             return;
 
-        if (controllerInput.GetAxisRightTrigger() != 0)
+        if (CInput.rightTrigger != 0)
         {
             wheelCollider.brakeTorque = 0;
-            accelValue = controllerInput.GetAxisRightTrigger();
+            accelValue = CInput.rightTrigger;
             Accelerate();
         }
-        else if (controllerInput.GetAxisLeftTrigger() != 0)
+        else if (CInput.leftTrigger != 0)
         {
             wheelCollider.brakeTorque = 0;
-            accelValue = -controllerInput.GetAxisLeftTrigger();
+            accelValue = -CInput.leftTrigger;
             Accelerate();
         }
         else
@@ -62,9 +57,9 @@ public class WheelManager : MonoBehaviour, IPlayable
                 wheelCollider.brakeTorque = 2;
         }
 
-        if (controllerInput.GetAxisLeftThumbstickX() != 0 && steerable)
+        if (CInput.leftStickX != 0 && steerable)
         {
-            steerValue = controllerInput.GetAxisLeftThumbstickX();
+            steerValue = CInput.leftStickX;
             Steer();
         }
         else
@@ -74,11 +69,6 @@ public class WheelManager : MonoBehaviour, IPlayable
         }
 
         UpdateMeshePosition();
-    }
-
-    private void Update()
-    {
-        controllerInput.Update();
     }
 
     private void UpdateMeshePosition()

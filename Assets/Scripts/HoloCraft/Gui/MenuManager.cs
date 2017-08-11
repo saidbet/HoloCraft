@@ -13,59 +13,62 @@ public class MenuManager : Singleton<MenuManager>
     public bool inMenu;
     public IMenu currentMenu;
 
-    private void Start()
-    {
-        InputHandler.Instance.keyPress += Instance_keyPress;
-    }
+    private Direction direction;
 
-    private void Instance_keyPress(KeyPress obj)
+    private void Update()
     {
-        if (MainManager.Instance.CurrentMode == MainManager.Mode.Building)
+        if (MainManager.Instance.CurrentMode == MainManager.Mode.Building || MainManager.Instance.CurrentMode == MainManager.Mode.InMenu)
         {
-            if (obj.button == ControllerConfig.LB)
+            if (CInput.start)
                 ToggleMenu(workspaceMenu);
 
-            if (obj.button == ControllerConfig.RB)
+            if (CInput.rbDown)
                 ToggleMenu(objectPicker);
 
-            if (obj.button == ControllerConfig.LEFTSTICK)
+            if (CInput.leftStick)
                 ToggleMenu(propertiesMenu);
         }
-        else if (MainManager.Instance.CurrentMode == MainManager.Mode.InMenu)
+        if (MainManager.Instance.CurrentMode == MainManager.Mode.InMenu)
         {
-            if (obj.button == ControllerConfig.Y)
+            if (CInput.bUp)
                 CloseMenus();
 
-            if (obj.button == ControllerConfig.DOWN)
-                currentMenu.MoveSelection(MainManager.Direction.Down);
-            if (obj.button == ControllerConfig.UP)
-                currentMenu.MoveSelection(MainManager.Direction.Up);
-            if (obj.button == ControllerConfig.LEFT)
-                currentMenu.MoveSelection(MainManager.Direction.Left);
-            if (obj.button == ControllerConfig.RIGHT)
-                currentMenu.MoveSelection(MainManager.Direction.Right);
+            direction = CInput.GetDpadDirection();
+            if (direction != Direction.None)
+                currentMenu.MoveSelection(direction);
         }
     }
 
     public void ToggleMenu(GameObject menu)
     {
         menu.SetActive(!menu.activeSelf);
+
         if (menu.activeSelf == true)
         {
             MainManager.Instance.CurrentMode = MainManager.Mode.InMenu;
 
             Selectable firstSelectable = menu.GetComponentInChildren<Selectable>();
+
             if (firstSelectable != null)
             {
                 EventSystem.current.SetSelectedGameObject(null);
                 EventSystem.current.SetSelectedGameObject(firstSelectable.gameObject);
             }
 
+            if (currentMenu != null)
+            {
+                MonoBehaviour monoObject = (MonoBehaviour)currentMenu;
+                monoObject.gameObject.SetActive(false);
+            }
+
             currentMenu = menu.GetComponent<IMenu>();
         }
 
         if (menu.activeSelf == false && MainManager.Instance.CurrentMode == MainManager.Mode.InMenu)
+        {
+            currentMenu = null;
             MainManager.Instance.CurrentMode = MainManager.Mode.Building;
+        }
     }
 
     public void CloseMenus()

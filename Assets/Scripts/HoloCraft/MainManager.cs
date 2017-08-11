@@ -2,20 +2,12 @@
 using HoloToolkit.Unity;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 using UnityEngine;
 
 public class MainManager : Singleton<MainManager>
 {
-    public enum Direction
-    {
-        Up,
-        Down,
-        Right,
-        Left,
-        Backward,
-        Forward
-    }
-
     public enum Mode
     {
         Building,
@@ -26,23 +18,17 @@ public class MainManager : Singleton<MainManager>
     }
 
     public GameObject workspacePrefab;
-    private WorkspaceController workspaceController;
+    public WorkspaceController workspaceController;
     public GameObject workspaceHolder;
 
-    private bool _isValid;
-
     //Info relative to current block to place
-    public GameObject objectToPlace;
-    private Block currentObject;
-    public Block _hoveredObject;
+
     public Block firstBlock;
 
     //Reference to other scripts
     public Creation creation;
-
-    //Position and rotation informations
-    private Vector3 currentPosition;
-    private Quaternion previousRot;
+    public Creator creator;
+    public CreationsList creationsList;
 
     private float timer;
 
@@ -67,50 +53,15 @@ public class MainManager : Singleton<MainManager>
         }
     }
 
-    bool IsValid
-    {
-        get { return _isValid; }
-
-        set
-        {
-            if (value == true)
-                currentObject.GetComponent<Block>().SetMaterialColor(Color.green);
-            else
-                currentObject.GetComponent<Block>().SetMaterialColor(Color.red);
-
-            _isValid = value;
-        }
-    }
-
-    public Block HoveredObject
-    {
-        get { return _hoveredObject; }
-
-        private set
-        {
-            if (_hoveredObject != null)
-                _hoveredObject.RestoreDefaultColor();
-
-            if (value != null)
-            {
-                currentObject.Hide();
-                value.SetMaterialColor(Color.yellow);
-            }
-            else
-            {
-                currentObject.UnHide();
-            }
-
-            _hoveredObject = value;
-        }
-    }
-
     private void Start()
     {
         creation = GetComponent<Creation>();
+        creator = GetComponent<Creator>();
         StartCoroutine(SpawnWorkspace());
-        previousRot = Quaternion.identity;
-        InputHandler.Instance.keyPress += Instance_keyPress;
+
+        object data = Utility.DeserializeFile("CreationsList");
+        if (data != null)
+            creationsList = (CreationsList)data;
     }
 
     private void Update()
@@ -145,53 +96,6 @@ public class MainManager : Singleton<MainManager>
         StartPlacing();
     }
 
-    private void Instance_keyPress(KeyPress obj)
-    {
-        if (CurrentMode != Mode.Building) return;
-
-        if (obj.button == ControllerConfig.RIGHT)
-            Translate(Direction.Right);
-        if (obj.button == ControllerConfig.LEFT)
-            Translate(Direction.Left);
-        if (obj.button == ControllerConfig.UP)
-            Translate(Direction.Up);
-        if (obj.button == ControllerConfig.DOWN)
-            Translate(Direction.Down);
-        if (obj.button == ControllerConfig.Y)
-            Translate(Direction.Forward);
-        if (obj.button == ControllerConfig.X)
-            Translate(Direction.Backward);
-
-        if (obj.button == ControllerConfig.RIGHTSTICKUP)
-            Rotate(MainManager.Direction.Up);
-        else if (obj.button == ControllerConfig.RIGHTSTICKDOWN)
-            Rotate(MainManager.Direction.Down);
-        else if (obj.button == ControllerConfig.RIGHTSTICKLEFT)
-            Rotate(MainManager.Direction.Left);
-        else if (obj.button == ControllerConfig.RIGHTSTICKRIGHT)
-            Rotate(MainManager.Direction.Right);
-        else if (obj.button == ControllerConfig.RIGHTSTICKDOWN)
-            Rotate(MainManager.Direction.Down);
-
-
-        if (obj.button == ControllerConfig.A)
-        {
-            if (creation.GetBlock(currentPosition) == null && IsValid == true)
-            {
-                Validate(currentPosition, currentObject.gameObject);
-                PlaceNext();
-            }
-        }
-        if (obj.button == ControllerConfig.B)
-        {
-            if (_hoveredObject != null && HoveredObject != firstBlock)
-            {
-                creation.RemoveBlock(HoveredObject.transform.localPosition);
-                PlaceNext();
-            }
-        }
-    }
-
     private void StartPlacing()
     {
         currentPosition = new Vector3(creation.maxHeight / 2, creation.maxWidth / 2, creation.maxDepth / 2);
@@ -204,115 +108,6 @@ public class MainManager : Singleton<MainManager>
         CurrentMode = Mode.Building;
         PlaceNext();
         Translate(Direction.Up);
-    }
-
-    public void PlaceNext()
-    {
-        if (currentObject != null)
-            Destroy(currentObject.gameObject);
-
-        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspaceHolder).GetComponent<Block>();
-        currentObject.transform.localPosition = currentPosition;
-        currentObject.transform.localRotation = previousRot;
-        CheckValid();
-    }
-
-    public void Validate(Vector3 position, GameObject block)
-    {
-        previousRot = block.transform.localRotation;
-        creation.AddToDict(position, block.GetComponent<Block>());
-        block.GetComponent<Block>().RestoreDefaultColor();
-        block.GetComponent<Block>().DisableSnapPoints();
-        currentObject = null;
-    }
-
-    public void Translate(Direction direction)
-    {
-        Vector3 translation = Vector3.zero;
-        switch (direction)
-        {
-            case Direction.Left:
-                translation = -Camera.main.transform.right;
-                break;
-            case Direction.Right:
-                translation = Camera.main.transform.right;
-                break;
-            case Direction.Up:
-                translation = Camera.main.transform.up;
-                break;
-            case Direction.Down:
-                translation = -Camera.main.transform.up;
-                break;
-            case Direction.Backward:
-                translation = -Camera.main.transform.forward;
-                break;
-            case Direction.Forward:
-                translation = Camera.main.transform.forward;
-                break;
-        }
-
-        Vector3 newTranslation = workspaceController.transform.InverseTransformDirection(translation);
-
-        newTranslation.x = Utility.Round(newTranslation.x);
-        newTranslation.y = Utility.Round(newTranslation.y);
-        newTranslation.z = Utility.Round(newTranslation.z);
-
-        Vector3 newPosition = currentObject.transform.localPosition + newTranslation;
-
-
-        if (!CheckPosition(newPosition)) return;
-
-        currentPosition += newTranslation;
-        currentObject.transform.localPosition = currentPosition;
-
-        CheckValid();
-    }
-
-    public void Rotate(Direction direction)
-    {
-        switch (direction)
-        {
-            case Direction.Left:
-                currentObject.transform.Rotate(0, -90, 0, Space.Self);
-                break;
-            case Direction.Right:
-                currentObject.transform.Rotate(0, 90, 0, Space.Self);
-                break;
-            case Direction.Up:
-                currentObject.transform.Rotate(90, 0, 0, Space.Self);
-                break;
-            case Direction.Down:
-                currentObject.transform.Rotate(-90, 0, 0, Space.Self);
-                break;
-        }
-    }
-
-    private bool CheckPosition(Vector3 position)
-    {
-        if (position.x < 0 || position.x >= creation.maxWidth ||
-            position.y < 0 || position.y >= creation.maxHeight ||
-            position.z < 0 || position.z >= creation.maxDepth)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
-    public void ChangeObject(GameObject newObject)
-    {
-        previousRot = currentObject.transform.localRotation;
-        Destroy(currentObject.gameObject);
-        objectToPlace = newObject;
-        PlaceNext();
-    }
-
-    private void CheckValid()
-    {
-        IsValid = false;
-        HoveredObject = creation.GetBlock(currentPosition);
     }
 
     public void SnapColliding()
@@ -329,6 +124,7 @@ public class MainManager : Singleton<MainManager>
         CurrentMode = Mode.Playing;
 
         Transform parent = new GameObject().transform;
+        parent.localScale = workspaceHolder.transform.localScale;
 
         foreach (var blk in creation.creationDict)
         {
@@ -345,7 +141,7 @@ public class MainManager : Singleton<MainManager>
                 playable.Startplay();
         }
 
-        workspaceController.GetComponent<WorkspaceController>().ToggleVisual(false);
+        workspaceController.ToggleVisual(false);
 
     }
 
@@ -371,5 +167,41 @@ public class MainManager : Singleton<MainManager>
         fixedJoint.connectedBody = secondRb;
         fixedJoint.breakForce = 9999;
         fixedJoint.breakTorque = 9999;
+    }
+
+    public void SaveData()
+    {
+        creation.AddToCreationsList(creationsList);
+        Utility.SerializeFile("CreationList", creationsList);
+    }
+
+    public void LoadCreation(string name)
+    {
+        CreationData creationToLoad = creationsList.creations.Find(data => data.name == name);
+        CleanUpWorkspace();
+        PopulateWorkspace(creationToLoad);
+    }
+
+    private void CleanUpWorkspace()
+    {
+        foreach (var item in creationDict)
+        {
+            Destroy(item.Value.gameObject);
+        }
+
+        creationDict = new Dictionary<Vector3, Block>();
+    }
+
+    private void PopulateWorkspace(CreationData data)
+    {
+        foreach (var item in data.dataToSave)
+        {
+            GameObject toInstantiate = MainManager.Instance.listOfBlocks.Find(block => block.blockType == item.type).prefab;
+            toInstantiate = Instantiate(toInstantiate, MainManager.Instance.workspaceHolder.transform);
+            Vector3 position = new Vector3(item.posX, item.posY, item.posZ);
+            toInstantiate.transform.localPosition = position;
+            MainManager.Instance.Validate(position, toInstantiate);
+        }
+        MainManager.Instance.PlaceNext();
     }
 }

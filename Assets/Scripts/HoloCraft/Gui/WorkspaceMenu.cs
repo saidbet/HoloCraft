@@ -41,16 +41,16 @@ public class WorkspaceMenu : MonoBehaviour, IMenu
         MenuManager.Instance.ToggleMenu(gameObject);
     }
 
-    public void MoveSelection(MainManager.Direction direction)
+    public void MoveSelection(Direction direction)
     {
         switch (direction)
         {
-            case MainManager.Direction.Down:
+            case Direction.Down:
                 if (currentIndex < transform.childCount - 1)
                     currentIndex += 1;
                 break;
 
-            case MainManager.Direction.Up:
+            case Direction.Up:
                 if (currentIndex > 0)
                     currentIndex -= 1;
                 break;

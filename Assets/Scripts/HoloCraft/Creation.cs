@@ -5,26 +5,48 @@ using System.Xml.Serialization;
 using UnityEngine;
 
 [System.Serializable]
-public class Creation : MonoBehaviour
+public class Creation
 {
     //size of the workspace
-    public int maxHeight = 20;
-    public int maxWidth = 20;
-    public int maxDepth = 20;
+    public int maxHeight;
+    public int maxWidth;
+    public int maxDepth;
 
     public string creationName;
     public Dictionary<Vector3, Block> creationDict = new Dictionary<Vector3, Block>();
-    public string date;
+    public DateTime date;
     public Texture2D thumbnail;
 
-    public CreationsList creationsList;
-
-    private void Start()
+    public Creation(int height, int width, int depth, string name)
     {
-        DeserializeCreationsList();
+        Initialize(height, width, depth, name);
+    }
 
-        if (creationsList == null)
-            creationsList = new CreationsList();
+    public Creation(int height, int width, int depth)
+    {
+        string randomName = Utility.GenerateName("Creation");
+        Initialize(height, width, depth, randomName);
+    }
+
+    public Creation()
+    {
+        string randomName = Utility.GenerateName("Creation");
+        Initialize(20, 20, 20, randomName);
+    }
+
+    public void Initialize(int height, int width, int depth, string name)
+    {
+        this.maxHeight = height;
+        this.maxWidth = width;
+        this.maxDepth = depth;
+        this.creationName = name;
+        date = DateTime.Now;
+        creationDict = new Dictionary<Vector3, Block>();
+    }
+
+    public void AddBlock(Vector3 key, Block block)
+    {
+        creationDict.Add(key, block);
     }
 
     public void RemoveBlock(Vector3 position)
@@ -48,79 +70,12 @@ public class Creation : MonoBehaviour
         return creationDict.ContainsKey(position);
     }
 
-    public void AddToDict(Vector3 key, Block block)
+    public void AddToCreationsList(CreationsList list)
     {
-        creationDict.Add(key, block);
-    }
-
-    public void AddToCreationsList()
-    {
-		int nbr = creationsList.nbrCreations + 1;
+		int nbr = list.nbrCreations + 1;
         string name = "Creation" + nbr;
         var data = new CreationData(creationDict, name);
-        creationsList.AddCreation(data);
-        SerializeCreationsList();
-    }
-
-    public void SerializeCreationsList()
-    {
-        using (FileStream file = File.Open(GetFilePath("CreationsList"), FileMode.OpenOrCreate))
-        {
-            var serializer = new XmlSerializer(typeof(CreationsList));
-            serializer.Serialize(file, creationsList);
-        }
-    }
-
-
-    public void DeserializeCreationsList()
-    {
-		if (!File.Exists(GetFilePath("CreationsList")))
-        {
-            Debug.Log("File does not exist");
-            return;
-        }
-
-        using (FileStream file = File.Open(GetFilePath("CreationsList"), FileMode.Open))
-        {
-            var serializer = new XmlSerializer(typeof(CreationsList));
-            creationsList = serializer.Deserialize(file) as CreationsList;
-        }
-    }
-
-
-    public string GetFilePath(string fileName)
-    {
-        return Path.Combine(Application.persistentDataPath, fileName + ".xml");
-    }
-
-    public void LoadCreation(string name)
-    {
-        CreationData creationToLoad = creationsList.creations.Find(data => data.name == name);
-        CleanUpWorkspace();
-        PopulateWorkspace(creationToLoad);
-    }
-
-    private void CleanUpWorkspace()
-    {
-        foreach (var item in creationDict)
-        {
-            Destroy(item.Value.gameObject);
-        }
-
-        creationDict = new Dictionary<Vector3, Block>();
-    }
-
-    private void PopulateWorkspace(CreationData data)
-    {
-        foreach (var item in data.dataToSave)
-        {
-            GameObject toInstantiate = MainManager.Instance.listOfBlocks.Find(block => block.blockType == item.type).prefab;
-            toInstantiate = Instantiate(toInstantiate, MainManager.Instance.workspaceHolder.transform);
-            Vector3 position = new Vector3(item.posX, item.posY, item.posZ);
-            toInstantiate.transform.localPosition = position;
-            MainManager.Instance.Validate(position, toInstantiate);
-        }
-        MainManager.Instance.PlaceNext();
+        list.AddCreation(data);
     }
 }
 

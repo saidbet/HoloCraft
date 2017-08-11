@@ -1,4 +1,4 @@
 ﻿public interface IMenu
 {
-    void MoveSelection(MainManager.Direction direction);
+    void MoveSelection(Direction direction);
 }
