@@ -29,7 +29,7 @@ public class Creation : MonoBehaviour
 
     public void RemoveBlock(Vector3 position)
     {
-        Destroy(GetBlock(position).gameObject);
+        ShareManager.Instance.spawnManager.Delete(GetBlock(position).gameObject);
         creationDict.Remove(position);
     }
 
@@ -120,6 +120,7 @@ public class Creation : MonoBehaviour
             toInstantiate.transform.localPosition = position;
             MainManager.Instance.Validate(position, toInstantiate);
         }
+        MainManager.Instance.PlaceNext();
     }
 }
 

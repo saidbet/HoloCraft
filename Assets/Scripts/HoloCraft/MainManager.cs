@@ -60,7 +60,7 @@ public class MainManager : Singleton<MainManager>
             if (timer <= 0)
             {
                 _currentMode = value;
-                timer = 0.2f;
+                timer = 0.1f;
             }
             else
                 return;
@@ -176,14 +176,17 @@ public class MainManager : Singleton<MainManager>
 
         if (obj.button == ControllerConfig.A)
         {
-            if (creation.GetBlock(currentPosition) == null)
+            if (creation.GetBlock(currentPosition) == null && IsValid == true)
+            {
                 Validate(currentPosition, currentObject.gameObject);
+                PlaceNext();
+            }
         }
         if (obj.button == ControllerConfig.B)
         {
-            if (_hoveredObject != null && _hoveredObject != firstBlock)
+            if (_hoveredObject != null && HoveredObject != firstBlock)
             {
-                creation.RemoveBlock(_hoveredObject.transform.localPosition);
+                creation.RemoveBlock(HoveredObject.transform.localPosition);
                 PlaceNext();
             }
         }
@@ -203,24 +206,24 @@ public class MainManager : Singleton<MainManager>
         Translate(Direction.Up);
     }
 
-    private void PlaceNext()
+    public void PlaceNext()
     {
+        if (currentObject != null)
+            Destroy(currentObject.gameObject);
+
         currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspaceHolder).GetComponent<Block>();
         currentObject.transform.localPosition = currentPosition;
         currentObject.transform.localRotation = previousRot;
-        currentObject.FindMats();
         CheckValid();
     }
 
     public void Validate(Vector3 position, GameObject block)
     {
-        if (_isValid == false) return;
-
         previousRot = block.transform.localRotation;
         creation.AddToDict(position, block.GetComponent<Block>());
         block.GetComponent<Block>().RestoreDefaultColor();
         block.GetComponent<Block>().DisableSnapPoints();
-        PlaceNext();
+        currentObject = null;
     }
 
     public void Translate(Direction direction)
@@ -345,7 +348,6 @@ public class MainManager : Singleton<MainManager>
         workspaceController.GetComponent<WorkspaceController>().ToggleVisual(false);
 
     }
-
 
     private void FindAdjacents(Vector3 position, GameObject currentBlock)
     {

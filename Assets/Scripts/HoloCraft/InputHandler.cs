@@ -121,7 +121,7 @@ public class InputHandler : Singleton<InputHandler>
                     InfoDisplay.Instance.UpdateText("leftstickright");
                 }
             }
-            else if (leftStickX < 0.2)
+            else if (leftStickX < -0.2)
             {
                 if (!leftStickUsed)
                 {
@@ -138,7 +138,7 @@ public class InputHandler : Singleton<InputHandler>
                     leftStickUsed = true;
                 }
             }
-            else if (leftStickY < 0.2)
+            else if (leftStickY < -0.2)
             {
                 if (!leftStickUsed)
                 {
@@ -231,11 +231,6 @@ public class InputHandler : Singleton<InputHandler>
             KeyDown(ControllerConfig.RIGHTSTICK);
         if (Input.GetKeyDown(KeyCode.JoystickButton8))
             KeyDown(ControllerConfig.LEFTSTICK);
-
-        if (Input.GetKeyUp(KeyCode.JoystickButton4))
-            KeyUp(ControllerConfig.LB);
-        if (Input.GetKeyUp(KeyCode.JoystickButton5))
-            KeyUp(ControllerConfig.RB);
 
 
         #region DPAD
