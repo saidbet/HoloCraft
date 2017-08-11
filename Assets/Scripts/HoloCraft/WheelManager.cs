@@ -1,6 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using HoloLensXboxController;
 using HoloToolkit.Unity;
+using UnityEngine;
 
 public class WheelManager : MonoBehaviour, IPlayable
 {
@@ -11,25 +11,29 @@ public class WheelManager : MonoBehaviour, IPlayable
     private float steerValue;
     private BlockPropertiesValues props;
 
+    private ControllerInput controllerInput;
+
     //Configurable options
     public bool steerable;
     public bool _oppositeDirection;
 
     public bool OppositeDirection
     {
-        get {return _oppositeDirection;}
+        get { return _oppositeDirection; }
         set
         {
             if (value == true && speed > 0)
                 speed = -speed;
             else if (value == false && speed < 0)
                 speed = -speed;
+
+            _oppositeDirection = value;
         }
     }
 
-    void Start()
+    private void Start()
     {
-
+        controllerInput = new ControllerInput(0, 0.10f);
     }
 
     private void FixedUpdate()
@@ -38,29 +42,29 @@ public class WheelManager : MonoBehaviour, IPlayable
         if (MainManager.Instance.CurrentMode != MainManager.Mode.Playing || wheelCollider == null)
             return;
 
-        if (Input.GetAxis("RightTrigger") != 0)
+        if (controllerInput.GetAxisRightTrigger() != 0)
         {
             wheelCollider.brakeTorque = 0;
-            accelValue = Input.GetAxis("RightTrigger");
+            accelValue = controllerInput.GetAxisRightTrigger();
             Accelerate();
         }
-        else if (Input.GetAxis("LeftTrigger") != 0)
+        else if (controllerInput.GetAxisLeftTrigger() != 0)
         {
             wheelCollider.brakeTorque = 0;
-            accelValue = -Input.GetAxis("LeftTrigger");
+            accelValue = -controllerInput.GetAxisLeftTrigger();
             Accelerate();
         }
         else
         {
             accelValue = 0;
             Accelerate();
-            if(wheelCollider.rpm < 10)
+            if (wheelCollider.rpm < 10)
                 wheelCollider.brakeTorque = 2;
         }
 
-        if ((Input.GetAxis("LeftStickHoriz") != 0 && steerable))
+        if (controllerInput.GetAxisLeftThumbstickX() != 0 && steerable)
         {
-            steerValue = Input.GetAxis("LeftStickHoriz");
+            steerValue = controllerInput.GetAxisLeftThumbstickX();
             Steer();
         }
         else
@@ -68,13 +72,13 @@ public class WheelManager : MonoBehaviour, IPlayable
             steerValue = 0;
             Steer();
         }
-        Debug.Log(Input.GetAxis("LeftStickHoriz"));
-        UpdateMeshePosition();
 
-        if (OppositeDirection == true && speed > 0)
-            speed = -speed;
-        else if (OppositeDirection == false && speed < 0)
-            speed = -speed;
+        UpdateMeshePosition();
+    }
+
+    private void Update()
+    {
+        controllerInput.Update();
     }
 
     private void UpdateMeshePosition()

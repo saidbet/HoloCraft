@@ -1,19 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class LoadPicker : MonoBehaviour
+public class LoadPicker : MonoBehaviour, IMenu
 {
     public GameObject elementPrefab;
     public List<GameObject> guiElements;
     public int nbrElementsPerLine;
     public int elementSize;
+    public int currentIndex;
 
     public void OnEnable()
     {
         if (MainManager.Instance.creation.creationsList == null) return;
+
+        currentIndex = 0;
 
         guiElements = new List<GameObject>();
 
@@ -30,7 +32,7 @@ public class LoadPicker : MonoBehaviour
 
     public void OnDisable()
     {
-        foreach(GameObject go in guiElements)
+        foreach (GameObject go in guiElements)
         {
             Destroy(go);
         }
@@ -49,5 +51,33 @@ public class LoadPicker : MonoBehaviour
         int y = index / nbrElementsPerLine;
 
         return new Vector2(x * elementSize, -y * elementSize);
+    }
+
+    public void MoveSelection(MainManager.Direction direction)
+    {
+        switch (direction)
+        {
+            case MainManager.Direction.Down:
+                if ((currentIndex + nbrElementsPerLine) < guiElements.Count)
+                    currentIndex += nbrElementsPerLine;
+                break;
+
+            case MainManager.Direction.Up:
+                if (currentIndex >= nbrElementsPerLine)
+                    currentIndex -= nbrElementsPerLine;
+                break;
+
+            case MainManager.Direction.Right:
+                if (currentIndex < guiElements.Count)
+                    currentIndex += 1;
+                break;
+
+            case MainManager.Direction.Left:
+                if (currentIndex > 0)
+                    currentIndex -= 1;
+                break;
+        }
+
+        EventSystem.current.SetSelectedGameObject(guiElements[currentIndex]);
     }
 }

@@ -1,16 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class ObjectPicker : MonoBehaviour
+public class ObjectPicker : MonoBehaviour, IMenu
 {
     public BlocksArray blocksArray;
     public GameObject elementPrefab;
     public GameObject[] guiElements;
     public int nbrElementsPerLine;
     public int elementSize;
+    public int currentIndex;
 
     private void Awake()
     {
@@ -25,8 +24,9 @@ public class ObjectPicker : MonoBehaviour
 
     private void OnEnable()
     {
+        currentIndex = 0;
         EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(guiElements[0]);
+        EventSystem.current.SetSelectedGameObject(guiElements[currentIndex]);
     }
 
     protected void PlaceElement(int index)
@@ -43,5 +43,33 @@ public class ObjectPicker : MonoBehaviour
         int y = index / nbrElementsPerLine;
 
         return new Vector2(x * elementSize, -y * elementSize);
+    }
+
+    public void MoveSelection(MainManager.Direction direction)
+    {
+        switch (direction)
+        {
+            case MainManager.Direction.Down:
+                if ((currentIndex + nbrElementsPerLine) < guiElements.Length)
+                    currentIndex += nbrElementsPerLine;
+                break;
+
+            case MainManager.Direction.Up:
+                if (currentIndex >= nbrElementsPerLine)
+                    currentIndex -= nbrElementsPerLine;
+                break;
+
+            case MainManager.Direction.Right:
+                if (currentIndex < guiElements.Length - 1)
+                    currentIndex += 1;
+                break;
+
+            case MainManager.Direction.Left:
+                if (currentIndex > 0)
+                    currentIndex -= 1;
+                break;
+        }
+
+        EventSystem.current.SetSelectedGameObject(guiElements[currentIndex]);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 using UnityEngine;
 
 [System.Serializable]
@@ -21,7 +21,7 @@ public class Creation : MonoBehaviour
 
     private void Start()
     {
-        creationsList = DeserializeFile("CreationsList") as CreationsList;
+        DeserializeCreationsList();
 
         if (creationsList == null)
             creationsList = new CreationsList();
@@ -53,60 +53,44 @@ public class Creation : MonoBehaviour
         creationDict.Add(key, block);
     }
 
-    public void SerializeDict(string name)
+    public void AddToCreationsList()
     {
-        using (FileStream file = File.Open(GetFilePath(name), FileMode.OpenOrCreate))
-        {
-            var binFormatter = new BinaryFormatter();
-            CreationData data = new CreationData(creationDict, name);
-            creationsList.AddCreation(data);
-            binFormatter.Serialize(file, data);
-        }
-
+		int nbr = creationsList.nbrCreations + 1;
+        string name = "Creation" + nbr;
+        var data = new CreationData(creationDict, name);
+        creationsList.AddCreation(data);
         SerializeCreationsList();
-    }
-
-    public void SerializeDict()
-    {
-        int index = creationsList.nbrCreations + 1;
-        string fileName = ("Creation" + index);
-        SerializeDict(fileName);
-    }
-
-    public object DeserializeFile(string name)
-    {
-        if (!File.Exists(GetFilePath(name)))
-        {
-            Debug.Log("File does not exist");
-            return null;
-        }
-
-        using (FileStream file = File.Open(GetFilePath(name), FileMode.Open))
-        {
-            var binFormatter = new BinaryFormatter();
-            var loadedData = binFormatter.Deserialize(file);
-            return loadedData;
-        }
-    }
-
-    public void DeserializeFile(int index)
-    {
-        string fileName = ("Creation" + index);
-        DeserializeFile(fileName);
     }
 
     public void SerializeCreationsList()
     {
         using (FileStream file = File.Open(GetFilePath("CreationsList"), FileMode.OpenOrCreate))
         {
-            var binFormatter = new BinaryFormatter();
-            binFormatter.Serialize(file, creationsList);
+            var serializer = new XmlSerializer(typeof(CreationsList));
+            serializer.Serialize(file, creationsList);
         }
     }
 
+
+    public void DeserializeCreationsList()
+    {
+		if (!File.Exists(GetFilePath("CreationsList")))
+        {
+            Debug.Log("File does not exist");
+            return;
+        }
+
+        using (FileStream file = File.Open(GetFilePath("CreationsList"), FileMode.Open))
+        {
+            var serializer = new XmlSerializer(typeof(CreationsList));
+            creationsList = serializer.Deserialize(file) as CreationsList;
+        }
+    }
+
+
     public string GetFilePath(string fileName)
     {
-        return Path.Combine(Application.persistentDataPath,fileName + ".dat");
+        return Path.Combine(Application.persistentDataPath, fileName + ".xml");
     }
 
     public void LoadCreation(string name)
@@ -118,7 +102,7 @@ public class Creation : MonoBehaviour
 
     private void CleanUpWorkspace()
     {
-        foreach(var item in creationDict)
+        foreach (var item in creationDict)
         {
             Destroy(item.Value.gameObject);
         }
@@ -128,7 +112,7 @@ public class Creation : MonoBehaviour
 
     private void PopulateWorkspace(CreationData data)
     {
-        foreach(var item in data.dataToSave)
+        foreach (var item in data.dataToSave)
         {
             GameObject toInstantiate = MainManager.Instance.listOfBlocks.Find(block => block.blockType == item.type).prefab;
             toInstantiate = Instantiate(toInstantiate, MainManager.Instance.workspaceHolder.transform);
@@ -144,6 +128,11 @@ public class CreationData
 {
     public string name;
     public BlockData[] dataToSave;
+
+	public CreationData()
+	{
+		
+	}
 
     public CreationData(Dictionary<Vector3, Block> dict, string name)
     {
@@ -172,10 +161,11 @@ public struct BlockData
     public BlockType.BlockTypes type;
 }
 
-[Serializable]
+[XmlRoot("CreationList"), Serializable]
 public class CreationsList
 {
     public int nbrCreations;
+    [XmlArray("Creations"), XmlArrayItem("Creation")]
     public List<CreationData> creations;
 
     public CreationsList()

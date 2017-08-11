@@ -15,16 +15,14 @@ public class WorkspaceController : MonoBehaviour
     {
         if (MainManager.Instance.CurrentMode == MainManager.Mode.Building)
         {
-            if (obj.button == ControllerConfig.RIGHTSTICKUP)
+            if (obj.button == ControllerConfig.LEFTSTICKUP)
                 RotateWorkspace(MainManager.Direction.Up);
-            else if (obj.button == ControllerConfig.RIGHTSTICKDOWN)
+            else if (obj.button == ControllerConfig.LEFTSTICKDOWN)
                 RotateWorkspace(MainManager.Direction.Down);
-            else if (obj.button == ControllerConfig.RIGHTSTICKLEFT)
+            else if (obj.button == ControllerConfig.LEFTSTICKLEFT)
                 RotateWorkspace(MainManager.Direction.Left);
-            else if (obj.button == ControllerConfig.RIGHTSTICKRIGHT)
+            else if (obj.button == ControllerConfig.LEFTSTICKRIGHT)
                 RotateWorkspace(MainManager.Direction.Right);
-            else if (obj.button == ControllerConfig.RIGHTSTICKDOWN)
-                RotateWorkspace(MainManager.Direction.Down);
 
             if (obj.button == ControllerConfig.RIGHTSTICK)
                 ResetRotation();

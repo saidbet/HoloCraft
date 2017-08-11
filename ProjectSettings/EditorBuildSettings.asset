@@ -5,30 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/starting_scene.unity
-    guid: aded6d4442a555e4da5a7c9c592abd0b
-  - enabled: 0
-    path: Assets/Scenes/scene_client.unity
-    guid: 917abd732de40b946a6a572fb03883cd
-  - enabled: 0
-    path: Assets/Scenes/Spectator.unity
-    guid: 1e0fe34c234cd91439147e9a3397e327
-  - enabled: 0
-    path: Assets/Scenes/scene_expert.unity
-    guid: 118714505cb306c4db5e05cfd799c339
-  - enabled: 0
-    path: Assets/Scenes/scene_globale.unity
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: Assets/Scenes/scene_hybride.unity
-    guid: 5f8943b491c742a4782dd4c772081c49
-  - enabled: 0
-    path: Assets/Scenes/scene_remote.unity
-    guid: 0dafdd98c219b2441abfc01a174bda4b
-  - enabled: 0
-    path: Assets/HoloCraft/Scenes/main_scene.unity
-    guid: bbc54dab3216717498a3c1c6cab59c3e
   - enabled: 1
-    path: Assets/HoloCraft/Scenes/test_scene.unity
-    guid: 75c86ede2e4a63f48bdb0dd14d57a2b5
+    path: Assets/Scenes/main_scene.unity
+    guid: bbc54dab3216717498a3c1c6cab59c3e

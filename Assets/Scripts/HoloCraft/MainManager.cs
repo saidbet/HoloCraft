@@ -60,7 +60,7 @@ public class MainManager : Singleton<MainManager>
             if (timer <= 0)
             {
                 _currentMode = value;
-                timer = 0.1f;
+                timer = 0.2f;
             }
             else
                 return;
@@ -162,14 +162,17 @@ public class MainManager : Singleton<MainManager>
         if (obj.button == ControllerConfig.X)
             Translate(Direction.Backward);
 
-        if (obj.button == ControllerConfig.LEFTSTICKUP)
-            Rotate(Direction.Up);
-        if (obj.button == ControllerConfig.LEFTSTICKDOWN)
-            Rotate(Direction.Down);
-        if (obj.button == ControllerConfig.LEFTSTICKLEFT)
-            Rotate(Direction.Left);
-        if (obj.button == ControllerConfig.LEFTSTICKRIGHT)
-            Rotate(Direction.Right);
+        if (obj.button == ControllerConfig.RIGHTSTICKUP)
+            Rotate(MainManager.Direction.Up);
+        else if (obj.button == ControllerConfig.RIGHTSTICKDOWN)
+            Rotate(MainManager.Direction.Down);
+        else if (obj.button == ControllerConfig.RIGHTSTICKLEFT)
+            Rotate(MainManager.Direction.Left);
+        else if (obj.button == ControllerConfig.RIGHTSTICKRIGHT)
+            Rotate(MainManager.Direction.Right);
+        else if (obj.button == ControllerConfig.RIGHTSTICKDOWN)
+            Rotate(MainManager.Direction.Down);
+
 
         if (obj.button == ControllerConfig.A)
         {
@@ -179,8 +182,10 @@ public class MainManager : Singleton<MainManager>
         if (obj.button == ControllerConfig.B)
         {
             if (_hoveredObject != null && _hoveredObject != firstBlock)
+            {
                 creation.RemoveBlock(_hoveredObject.transform.localPosition);
-            PlaceNext();
+                PlaceNext();
+            }
         }
     }
 
@@ -333,7 +338,7 @@ public class MainManager : Singleton<MainManager>
             blk.Value.GetComponent<Rigidbody>().isKinematic = false;
             IPlayable playable = blk.Value.GetComponent<IPlayable>();
 
-            if(playable != null)
+            if (playable != null)
                 playable.Startplay();
         }
 

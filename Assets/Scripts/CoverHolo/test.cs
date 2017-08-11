@@ -1,25 +1,18 @@
-﻿
-using HoloToolkit.Sharing.Spawning;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 
 public class test : MonoBehaviour
 {
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.A))
-        {
-            MainManager.Instance.CurrentMode = MainManager.Mode.Playing;
-        }
+    public GameObject plane;
 
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            Debug.Log(MainManager.Instance.creation.creationsList.nbrCreations);
-            Debug.Log(MainManager.Instance.creation.creationsList.creations.Count);
-        }
+    private void Start()
+    {
+        InputHandler.Instance.keyPress += Instance_keyPress;
+    }
+
+    private void Instance_keyPress(KeyPress obj)
+    {
+        if (obj.button == ControllerConfig.RIGHTSTICK)
+            plane.SetActive(!plane.activeSelf);
     }
 }

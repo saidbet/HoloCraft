@@ -1,8 +1,6 @@
 ﻿using HoloLensXboxController;
 using HoloToolkit.Unity;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class KeyPress
@@ -62,9 +60,10 @@ public class InputHandler : Singleton<InputHandler>
     void Update()
     {
         #region UNITY_WSA
-        #if UNITY_WSA
+#if UNITY_WSA
         if (!Application.isEditor)
         {
+
             controllerInput.Update();
             if (controllerInput.GetButtonDown(ControllerButton.A))
                 KeyDown(ControllerConfig.A);
@@ -112,19 +111,6 @@ public class InputHandler : Singleton<InputHandler>
             leftStickX = controllerInput.GetAxisLeftThumbstickX();
             leftStickY = controllerInput.GetAxisLeftThumbstickY();
 
-            //continious axis input
-            if (CheckAxis(leftStickX))
-                keyPress(new KeyPress(ControllerConfig.LEFTSTICKX, leftStickX));
-
-            if (CheckAxis(leftStickY))
-                keyPress(new KeyPress(ControllerConfig.LEFTSTICKY, leftStickY));
-
-            if (CheckAxis(rightStickX))
-                keyPress(new KeyPress(ControllerConfig.RIGHTSTICKX, rightStickX));
-
-            if (CheckAxis(rightStickY))
-                keyPress(new KeyPress(ControllerConfig.RIGHTSTICKY, rightStickY));
-
             //Single input
             if (leftStickX > 0.2)
             {
@@ -132,6 +118,7 @@ public class InputHandler : Singleton<InputHandler>
                 {
                     KeyDown(ControllerConfig.LEFTSTICKRIGHT);
                     leftStickUsed = true;
+                    InfoDisplay.Instance.UpdateText("leftstickright");
                 }
             }
             else if (leftStickX < 0.2)
@@ -140,6 +127,7 @@ public class InputHandler : Singleton<InputHandler>
                 {
                     KeyDown(ControllerConfig.LEFTSTICKLEFT);
                     leftStickUsed = true;
+                    InfoDisplay.Instance.UpdateText("leftstickleft");
                 }
             }
             else if (leftStickY > 0.2)
@@ -160,6 +148,13 @@ public class InputHandler : Singleton<InputHandler>
             }
             else
                 leftStickUsed = false;
+
+            //continious axis input
+            if (CheckAxis(leftStickX))
+                keyPress(new KeyPress(ControllerConfig.LEFTSTICKX, leftStickX));
+
+            if (CheckAxis(leftStickY))
+                keyPress(new KeyPress(ControllerConfig.LEFTSTICKY, leftStickY));
 
             #endregion
 
@@ -212,11 +207,11 @@ public class InputHandler : Singleton<InputHandler>
             #endregion
         }
 
-        #endif
+#endif
         #endregion
-  
+
         #region UNITY_EDITOR
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
         if (Input.GetKeyDown(KeyCode.JoystickButton0))
             KeyDown(ControllerConfig.A);
@@ -391,7 +386,7 @@ public class InputHandler : Singleton<InputHandler>
         if (CheckAxis(rightTrigger))
             keyPress(new KeyPress(ControllerConfig.RIGHTTRIGGER, rightTrigger));
 
-        #endif
+#endif
         #endregion
     }
 
