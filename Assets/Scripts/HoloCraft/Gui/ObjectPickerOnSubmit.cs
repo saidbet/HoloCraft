@@ -9,7 +9,7 @@ public class ObjectPickerOnSubmit : EventTrigger {
 
     public override void OnSubmit(BaseEventData eventData)
     {
-        MainManager.Instance.ChangeObject(blockType.prefab);
+        MainManager.Instance.creator.ChangeObject(blockType.prefab);
         MenuManager.Instance.ToggleMenu(MenuManager.Instance.objectPicker);
     }
 }

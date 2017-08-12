@@ -10,7 +10,7 @@ public class SnapPoint : MonoBehaviour
     {
         if (collider.transform.tag == "SnapPoint")
         {
-            MainManager.Instance.SnapColliding();
+            MainManager.Instance.creator.SnapColliding();
         }
     }
 }

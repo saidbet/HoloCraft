@@ -3,31 +3,27 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class LoadPicker : MonoBehaviour, IMenu
+public class LoadPicker : Menu
 {
     public GameObject elementPrefab;
     public List<GameObject> guiElements;
-    public int nbrElementsPerLine;
-    public int elementSize;
-    public int currentIndex;
 
-    public void OnEnable()
+    protected override void OnEnable()
     {
-        if (MainManager.Instance.creation.creationsList == null) return;
+        if (MainManager.Instance.creationsList == null) return;
 
         currentIndex = 0;
 
         guiElements = new List<GameObject>();
 
-        for (int i = 0; i < MainManager.Instance.creation.creationsList.creations.Count; i++)
+        for (int i = 0; i < MainManager.Instance.creationsList.creations.Count; i++)
         {
             PlaceElement(i);
-            guiElements[i].transform.GetComponentInChildren<Text>().text = MainManager.Instance.creation.creationsList.creations[i].name;
-            guiElements[i].transform.GetComponent<LoadCreationOnSubmit>().creationName = MainManager.Instance.creation.creationsList.creations[i].name;
+            guiElements[i].transform.GetComponentInChildren<Text>().text = MainManager.Instance.creationsList.creations[i].creationName;
+            guiElements[i].transform.GetComponent<LoadCreationOnSubmit>().creationName = MainManager.Instance.creationsList.creations[i].creationName;
         }
 
-        EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(guiElements[0]);
+        base.OnEnable();
     }
 
     public void OnDisable()
@@ -42,42 +38,5 @@ public class LoadPicker : MonoBehaviour, IMenu
     {
         guiElements.Add(Instantiate(elementPrefab, transform));
         guiElements[index].GetComponent<RectTransform>().anchoredPosition = GetValidPosition(index);
-    }
-
-    public Vector2 GetValidPosition(int index)
-    {
-        int x = index % nbrElementsPerLine;
-
-        int y = index / nbrElementsPerLine;
-
-        return new Vector2(x * elementSize, -y * elementSize);
-    }
-
-    public void MoveSelection(Direction direction)
-    {
-        switch (direction)
-        {
-            case Direction.Down:
-                if ((currentIndex + nbrElementsPerLine) < guiElements.Count)
-                    currentIndex += nbrElementsPerLine;
-                break;
-
-            case Direction.Up:
-                if (currentIndex >= nbrElementsPerLine)
-                    currentIndex -= nbrElementsPerLine;
-                break;
-
-            case Direction.Right:
-                if (currentIndex < guiElements.Count)
-                    currentIndex += 1;
-                break;
-
-            case Direction.Left:
-                if (currentIndex > 0)
-                    currentIndex -= 1;
-                break;
-        }
-
-        EventSystem.current.SetSelectedGameObject(guiElements[currentIndex]);
     }
 }

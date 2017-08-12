@@ -21,53 +21,38 @@ public class MainManager : Singleton<MainManager>
     public WorkspaceController workspaceController;
     public GameObject workspaceHolder;
 
-    //Info relative to current block to place
-
-    public Block firstBlock;
-
     //Reference to other scripts
-    public Creation creation;
+    private Creation creation;
     public Creator creator;
     public CreationsList creationsList;
 
+    public string CreationsListFilename = "CreationsList";
+
     private float timer;
 
-    public List<BlockType> listOfBlocks = new List<BlockType>();
+    public BlocksArray blockArray;
+    private List<BlockType> listOfBlocks = new List<BlockType>();
 
     //Current mode
-    private Mode _currentMode;
-
-    public Mode CurrentMode
-    {
-        get { return _currentMode; }
-
-        set
-        {
-            if (timer <= 0)
-            {
-                _currentMode = value;
-                timer = 0.1f;
-            }
-            else
-                return;
-        }
-    }
+    public Mode currentMode;
 
     private void Start()
     {
-        creation = GetComponent<Creation>();
+        creation = new Creation(20, 20, 20);
         creator = GetComponent<Creator>();
-        StartCoroutine(SpawnWorkspace());
-
-        object data = Utility.DeserializeFile("CreationsList");
-        if (data != null)
-            creationsList = (CreationsList)data;
+        listOfBlocks.AddRange(blockArray.array);
+        InitCreationsList();
+        StartCreator();
     }
 
-    private void Update()
+    private void InitCreationsList()
     {
-        if (timer > 0)
-            timer -= Time.deltaTime;
+        object data = Utility.DeserializeFile(CreationsListFilename);
+
+        if (data != null)
+            creationsList = (CreationsList)data;
+        else
+            creationsList = new CreationsList();
     }
 
     private IEnumerator SpawnWorkspace()
@@ -93,35 +78,21 @@ public class MainManager : Singleton<MainManager>
             workspaceController.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 1;
         }
 
-        StartPlacing();
-    }
-
-    private void StartPlacing()
-    {
-        currentPosition = new Vector3(creation.maxHeight / 2, creation.maxWidth / 2, creation.maxDepth / 2);
         workspaceHolder = workspaceController.workspaceHolder;
-        firstBlock = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspaceHolder).GetComponent<Block>();
-        firstBlock.transform.localPosition = currentPosition;
-        creation.AddToDict(currentPosition, firstBlock);
-        firstBlock.GetComponent<Block>().DisableSnapPoints();
-        firstBlock.FindMats();
-        CurrentMode = Mode.Building;
-        PlaceNext();
-        Translate(Direction.Up);
+        Vector3 initialPos = new Vector3(creation.maxWidth / 2, creation.maxHeight / 2, creation.maxDepth / 2);
+        creator.StartPlacing(initialPos, creation, workspaceHolder);
     }
 
-    public void SnapColliding()
+    private void StartCreator()
     {
-        if (_hoveredObject == null && IsValid == false)
-        {
-            IsValid = true;
-        }
+        currentMode = Mode.Building;
+        StartCoroutine(SpawnWorkspace());
     }
 
     public void StartPlayMode()
     {
-        Destroy(currentObject.gameObject);
-        CurrentMode = Mode.Playing;
+        currentMode = Mode.Playing;
+        creator.StopCreation();
 
         Transform parent = new GameObject().transform;
         parent.localScale = workspaceHolder.transform.localScale;
@@ -130,9 +101,8 @@ public class MainManager : Singleton<MainManager>
         {
 
             blk.Value.transform.SetParent(parent.transform);
-            //blk.Value.transform.localScale = Vector3.one;
 
-            FindAdjacents(blk.Key, blk.Value.gameObject);
+            JointToAdjacents(blk.Key, blk.Value.gameObject);
 
             blk.Value.GetComponent<Rigidbody>().isKinematic = false;
             IPlayable playable = blk.Value.GetComponent<IPlayable>();
@@ -141,11 +111,10 @@ public class MainManager : Singleton<MainManager>
                 playable.Startplay();
         }
 
-        workspaceController.ToggleVisual(false);
-
+        Destroy(workspaceController.gameObject);
     }
 
-    private void FindAdjacents(Vector3 position, GameObject currentBlock)
+    private void JointToAdjacents(Vector3 position, GameObject currentBlock)
     {
         Vector3[] adjacentPos = Utility.FindAdjacentPos(position);
         Block foundBlock = null;
@@ -172,36 +141,27 @@ public class MainManager : Singleton<MainManager>
     public void SaveData()
     {
         creation.AddToCreationsList(creationsList);
-        Utility.SerializeFile("CreationList", creationsList);
+        Utility.SerializeFile(CreationsListFilename, creationsList);
     }
 
     public void LoadCreation(string name)
     {
-        CreationData creationToLoad = creationsList.creations.Find(data => data.name == name);
-        CleanUpWorkspace();
-        PopulateWorkspace(creationToLoad);
+        CreationData creationToLoad = creationsList.creations.Find(data => data.creationName == name);
+        creation.CleanUpWorkspace();
+        creation.SetUpFromLoadData(creationToLoad);
+        PopulateWorkspace(creationToLoad.savedBlocks);
     }
 
-    private void CleanUpWorkspace()
+    private void PopulateWorkspace(BlockData[] data)
     {
-        foreach (var item in creationDict)
+        foreach (var item in data)
         {
-            Destroy(item.Value.gameObject);
-        }
-
-        creationDict = new Dictionary<Vector3, Block>();
-    }
-
-    private void PopulateWorkspace(CreationData data)
-    {
-        foreach (var item in data.dataToSave)
-        {
-            GameObject toInstantiate = MainManager.Instance.listOfBlocks.Find(block => block.blockType == item.type).prefab;
-            toInstantiate = Instantiate(toInstantiate, MainManager.Instance.workspaceHolder.transform);
+            GameObject toInstantiate = listOfBlocks.Find(block => block.blockType == item.type).prefab;
+            toInstantiate = Instantiate(toInstantiate, workspaceHolder.transform);
             Vector3 position = new Vector3(item.posX, item.posY, item.posZ);
             toInstantiate.transform.localPosition = position;
-            MainManager.Instance.Validate(position, toInstantiate);
+            creator.Validate(position, toInstantiate);
         }
-        MainManager.Instance.PlaceNext();
+        creator.PlaceNext();
     }
 }

@@ -15,7 +15,6 @@ public class Creation
     public string creationName;
     public Dictionary<Vector3, Block> creationDict = new Dictionary<Vector3, Block>();
     public DateTime date;
-    public Texture2D thumbnail;
 
     public Creation(int height, int width, int depth, string name)
     {
@@ -40,7 +39,9 @@ public class Creation
         this.maxWidth = width;
         this.maxDepth = depth;
         this.creationName = name;
-        date = DateTime.Now;
+
+        this.date = DateTime.Now;
+
         creationDict = new Dictionary<Vector3, Block>();
     }
 
@@ -72,39 +73,74 @@ public class Creation
 
     public void AddToCreationsList(CreationsList list)
     {
-		int nbr = list.nbrCreations + 1;
-        string name = "Creation" + nbr;
-        var data = new CreationData(creationDict, name);
+        var data = new CreationData(this);
         list.AddCreation(data);
+    }
+
+    public void CleanUpWorkspace()
+    {
+        foreach (var item in creationDict)
+        {
+            ShareManager.Instance.spawnManager.Delete(item.Value.gameObject);
+        }
+
+        creationDict = new Dictionary<Vector3, Block>();
+    }
+
+    public void SetUpFromLoadData(CreationData data)
+    {
+        maxHeight = data.maxHeight;
+        maxWidth = data.maxWidth;
+        maxDepth = data.maxDepth;
+
+        creationName = data.creationName;
+        date = data.date;
     }
 }
 
 [Serializable]
 public class CreationData
 {
-    public string name;
-    public BlockData[] dataToSave;
+    public string creationName;
 
-	public CreationData()
+    public DateTime date;
+
+    public int maxHeight;
+    public int maxWidth;
+    public int maxDepth;
+
+    public BlockData[] savedBlocks;
+
+	public CreationData(Creation creation)
 	{
-		
-	}
+        this.creationName = creation.creationName;
 
-    public CreationData(Dictionary<Vector3, Block> dict, string name)
+        maxHeight = creation.maxHeight;
+        maxWidth = creation.maxWidth;
+        maxDepth = creation.maxDepth;
+
+        date = creation.date;
+        DictToArray(creation.creationDict);
+    }
+
+    public CreationData()
     {
-        dataToSave = new BlockData[dict.Count];
+
+    }
+
+    private void DictToArray(Dictionary<Vector3, Block> dict)
+    {
+        savedBlocks = new BlockData[dict.Count];
         int index = 0;
         foreach (var item in dict)
         {
-            dataToSave[index].posX = item.Key.x;
-            dataToSave[index].posY = item.Key.y;
-            dataToSave[index].posZ = item.Key.z;
+            savedBlocks[index].posX = item.Key.x;
+            savedBlocks[index].posY = item.Key.y;
+            savedBlocks[index].posZ = item.Key.z;
 
-            dataToSave[index].type = item.Value.type.blockType;
+            savedBlocks[index].type = item.Value.type.blockType;
             index++;
         }
-
-        this.name = name;
     }
 }
 

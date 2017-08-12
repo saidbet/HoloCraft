@@ -1,10 +1,17 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class WorkspaceMenu : MonoBehaviour, IMenu
 {
 
     public int currentIndex;
+
+    private void Update()
+    {
+        if (CInput.aUp)
+            Submit();
+    }
 
     private void OnEnable()
     {
@@ -13,14 +20,14 @@ public class WorkspaceMenu : MonoBehaviour, IMenu
 
     public void StartMoveWorkspace()
     {
-        MainManager.Instance.CurrentMode = MainManager.Mode.Moving;
         MenuManager.Instance.ToggleMenu(gameObject);
+        MainManager.Instance.currentMode = MainManager.Mode.Moving;
     }
 
     public void StartScaleWorkspace()
     {
-        MainManager.Instance.CurrentMode = MainManager.Mode.Scaling;
         MenuManager.Instance.ToggleMenu(gameObject);
+        MainManager.Instance.currentMode = MainManager.Mode.Scaling;
     }
 
     public void StartPlay()
@@ -31,14 +38,14 @@ public class WorkspaceMenu : MonoBehaviour, IMenu
 
     public void SaveCreation()
     {
-        MainManager.Instance.creation.AddToCreationsList();
+        MainManager.Instance.SaveData();
         MenuManager.Instance.ToggleMenu(gameObject);
     }
 
     public void LoadCreation()
     {
-        MenuManager.Instance.ToggleMenu(MenuManager.Instance.LoadingMenu);
         MenuManager.Instance.ToggleMenu(gameObject);
+        MenuManager.Instance.ToggleMenu(MenuManager.Instance.LoadingMenu);
     }
 
     public void MoveSelection(Direction direction)
@@ -60,5 +67,10 @@ public class WorkspaceMenu : MonoBehaviour, IMenu
         }
 
         EventSystem.current.SetSelectedGameObject(transform.GetChild(currentIndex).gameObject);
+    }
+
+    public void Submit()
+    {
+        EventSystem.current.currentSelectedGameObject.GetComponent<EventTrigger>().OnSubmit(new BaseEventData(EventSystem.current));
     }
 }

@@ -14,7 +14,7 @@ public class PropertyHolder : MonoBehaviour
 
     private void Start()
     {
-        currentObject = MainManager.Instance._hoveredObject;
+        currentObject = MainManager.Instance.creator.HoveredObject;
         currentProperty = currentObject.GetComponent<BlockPropertiesValues>().properties.Find(prop => prop.property == property);
 
         if (input != null)

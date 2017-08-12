@@ -34,7 +34,7 @@ public class WheelManager : MonoBehaviour, IPlayable
     private void Update()
     {
 
-        if (MainManager.Instance.CurrentMode != MainManager.Mode.Playing || wheelCollider == null)
+        if (MainManager.Instance.currentMode != MainManager.Mode.Playing || wheelCollider == null)
             return;
 
         if (CInput.rightTrigger != 0)

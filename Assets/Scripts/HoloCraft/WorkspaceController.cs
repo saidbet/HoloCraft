@@ -10,7 +10,7 @@ public class WorkspaceController : MonoBehaviour
 
     private void Update()
     {
-        if (MainManager.Instance.CurrentMode == MainManager.Mode.Building)
+        if (MainManager.Instance.currentMode == MainManager.Mode.Building)
         {
             direction = CInput.GetRightAxisDirection();
             if(direction != Direction.None)
@@ -22,9 +22,9 @@ public class WorkspaceController : MonoBehaviour
                 ResetRotation();
         }
 
-        else if (MainManager.Instance.CurrentMode == MainManager.Mode.Moving)
+        else if (MainManager.Instance.currentMode == MainManager.Mode.Moving)
         {
-            direction = CInput.GetLeftAxisDirection();
+            direction = CInput.GetDpadDirection();
             if (direction != Direction.None)
             {
                 MoveWorkspace(direction);
@@ -33,25 +33,26 @@ public class WorkspaceController : MonoBehaviour
             if (CInput.leftStick)
                 ResetPosition();
 
-            if (CInput.yHold)
+            if (CInput.yDown)
                 MoveWorkspace(Direction.Forward);
 
-            if (CInput.xHold)
+            if (CInput.xDown)
                 MoveWorkspace(Direction.Backward);
 
-            if (CInput.aUp)
-                MainManager.Instance.CurrentMode = MainManager.Mode.Building;
+            if (CInput.aDown)
+                MainManager.Instance.currentMode = MainManager.Mode.Building;
         }
 
-        else if (MainManager.Instance.CurrentMode == MainManager.Mode.Scaling)
+        else if (MainManager.Instance.currentMode == MainManager.Mode.Scaling)
         {
-            if (CInput.dpadX > 0.5)
-                ScaleWorkspace(Direction.Up);
-            else if (CInput.dpadX < -0.5)
-                ScaleWorkspace(Direction.Down);
+            direction = CInput.GetDpadDirection();
+            if (direction == Direction.Up || direction == Direction.Down)
+            {
+                ScaleWorkspace(direction);
+            }
 
             if (CInput.aUp)
-                MainManager.Instance.CurrentMode = MainManager.Mode.Building;
+                MainManager.Instance.currentMode = MainManager.Mode.Building;
         }
     }
 
@@ -121,7 +122,7 @@ public class WorkspaceController : MonoBehaviour
 
     private void Validate()
     {
-        MainManager.Instance.CurrentMode = MainManager.Mode.Building;
+        MainManager.Instance.currentMode = MainManager.Mode.Building;
     }
 
     public void ToggleVisual(bool state)

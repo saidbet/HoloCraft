@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class Creator : MonoBehaviour
 {
-    public MainManager main;
-
     public GameObject objectToPlace;
     private Block currentObject;
+    public Block firstBlock;
+
     public Block _hoveredObject;
+
     public Block HoveredObject
     {
         get { return _hoveredObject; }
@@ -40,6 +41,10 @@ public class Creator : MonoBehaviour
 
     private bool _isValid;
 
+    private Creation creation;
+
+    public GameObject workspaceHolder;
+
     bool IsValid
     {
         get { return _isValid; }
@@ -55,14 +60,9 @@ public class Creator : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        main = GetComponent<MainManager>();
-    }
-
     private void Update()
     {
-        if (MainManager.Instance.CurrentMode != MainManager.Mode.Building) return;
+        if (MainManager.Instance.currentMode != MainManager.Mode.Building) return;
 
         direction = CInput.GetDpadDirection();
         if (direction != Direction.None)
@@ -94,12 +94,26 @@ public class Creator : MonoBehaviour
         }
     }
 
+    public void StartPlacing(Vector3 initialPos, Creation creation, GameObject workspaceHolder)
+    {
+        this.creation = creation;
+        this.workspaceHolder = workspaceHolder;
+        this.currentPosition = initialPos;
+
+        firstBlock = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspaceHolder).GetComponent<Block>();
+        firstBlock.transform.localPosition = currentPosition;
+        Validate(currentPosition, firstBlock.gameObject);
+
+        PlaceNext();
+        Translate(Direction.Up);
+    }
+
     public void PlaceNext()
     {
         if (currentObject != null)
             Destroy(currentObject.gameObject);
 
-        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", main.workspaceHolder).GetComponent<Block>();
+        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspaceHolder).GetComponent<Block>();
         currentObject.transform.localPosition = currentPosition;
         currentObject.transform.localRotation = previousRot;
         CheckValid();
@@ -107,9 +121,9 @@ public class Creator : MonoBehaviour
 
     private bool CheckPosition(Vector3 position)
     {
-        if (position.x < 0 || position.x >= main.creation.maxWidth ||
-            position.y < 0 || position.y >= main.creation.maxHeight ||
-            position.z < 0 || position.z >= main.creation.maxDepth)
+        if (position.x < 0 || position.x >= creation.maxWidth ||
+            position.y < 0 || position.y >= creation.maxHeight ||
+            position.z < 0 || position.z >= creation.maxDepth)
         {
             return false;
         }
@@ -163,7 +177,7 @@ public class Creator : MonoBehaviour
                 break;
         }
 
-        Vector3 newTranslation = main.workspaceController.transform.InverseTransformDirection(translation);
+        Vector3 newTranslation = workspaceHolder.transform.InverseTransformDirection(translation);
 
         newTranslation.x = Utility.Round(newTranslation.x);
         newTranslation.y = Utility.Round(newTranslation.y);
@@ -183,7 +197,7 @@ public class Creator : MonoBehaviour
     private void CheckValid()
     {
         IsValid = false;
-        HoveredObject = main.creation.GetBlock(currentPosition);
+        HoveredObject = creation.GetBlock(currentPosition);
     }
 
     public void ChangeObject(GameObject newObject)
@@ -197,9 +211,24 @@ public class Creator : MonoBehaviour
     public void Validate(Vector3 position, GameObject block)
     {
         previousRot = block.transform.localRotation;
-        main.creation.AddBlock(position, block.GetComponent<Block>());
+        creation.AddBlock(position, block.GetComponent<Block>());
         block.GetComponent<Block>().RestoreDefaultColor();
         block.GetComponent<Block>().DisableSnapPoints();
         currentObject = null;
+    }
+
+    public void SnapColliding()
+    {
+        if (HoveredObject == null && IsValid == false)
+        {
+            IsValid = true;
+        }
+    }
+
+    public void StopCreation()
+    {
+        Destroy(currentObject.gameObject);
+        if (HoveredObject != null)
+            HoveredObject.RestoreDefaultColor();
     }
 }

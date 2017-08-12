@@ -3,17 +3,17 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class PropertiesManager : MonoBehaviour, IMenu
+public class PropertiesManager : Menu
 {
     public List<PropertyPrefab> propertiesPrefabs;
     public Selectable[] selectables;
     public int currentIndex;
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
-        Block currentBlock = MainManager.Instance.HoveredObject;
-        if (currentBlock == null) return;
+        Block currentBlock = MainManager.Instance.creator.HoveredObject;
 
+        if (currentBlock == null) return;
 
         for (int i = 0; i < currentBlock.type.properties.Length; i++)
         {
@@ -21,8 +21,7 @@ public class PropertiesManager : MonoBehaviour, IMenu
             current.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -i * 40);
         }
 
-        selectables = GetComponentsInChildren<Selectable>();
-
+        base.OnEnable();
     }
 
     private void OnDisable()
@@ -31,33 +30,5 @@ public class PropertiesManager : MonoBehaviour, IMenu
         {
             Destroy(child.gameObject);
         }
-    }
-
-    public void MoveSelection(Direction direction)
-    {
-        switch (direction)
-        {
-            case Direction.Down:
-                if (currentIndex < selectables.Length - 1)
-                    currentIndex += 1;
-                break;
-
-            case Direction.Up:
-                if (currentIndex > 0)
-                    currentIndex -= 1;
-                break;
-
-            case Direction.Right:
-                if (currentIndex < selectables.Length - 1)
-                    currentIndex += 1;
-                break;
-
-            case Direction.Left:
-                if (currentIndex > 0)
-                    currentIndex -= 1;
-                break;
-        }
-
-        EventSystem.current.SetSelectedGameObject(selectables[currentIndex].gameObject);
     }
 }

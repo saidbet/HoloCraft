@@ -17,7 +17,7 @@ public class MenuManager : Singleton<MenuManager>
 
     private void Update()
     {
-        if (MainManager.Instance.CurrentMode == MainManager.Mode.Building || MainManager.Instance.CurrentMode == MainManager.Mode.InMenu)
+        if (MainManager.Instance.currentMode == MainManager.Mode.Building || MainManager.Instance.currentMode == MainManager.Mode.InMenu)
         {
             if (CInput.start)
                 ToggleMenu(workspaceMenu);
@@ -28,14 +28,10 @@ public class MenuManager : Singleton<MenuManager>
             if (CInput.leftStick)
                 ToggleMenu(propertiesMenu);
         }
-        if (MainManager.Instance.CurrentMode == MainManager.Mode.InMenu)
+        if (MainManager.Instance.currentMode == MainManager.Mode.InMenu)
         {
             if (CInput.bUp)
                 CloseMenus();
-
-            direction = CInput.GetDpadDirection();
-            if (direction != Direction.None)
-                currentMenu.MoveSelection(direction);
         }
     }
 
@@ -45,7 +41,7 @@ public class MenuManager : Singleton<MenuManager>
 
         if (menu.activeSelf == true)
         {
-            MainManager.Instance.CurrentMode = MainManager.Mode.InMenu;
+            MainManager.Instance.currentMode = MainManager.Mode.InMenu;
 
             Selectable firstSelectable = menu.GetComponentInChildren<Selectable>();
 
@@ -64,10 +60,10 @@ public class MenuManager : Singleton<MenuManager>
             currentMenu = menu.GetComponent<IMenu>();
         }
 
-        if (menu.activeSelf == false && MainManager.Instance.CurrentMode == MainManager.Mode.InMenu)
+        if (menu.activeSelf == false && MainManager.Instance.currentMode == MainManager.Mode.InMenu)
         {
             currentMenu = null;
-            MainManager.Instance.CurrentMode = MainManager.Mode.Building;
+            MainManager.Instance.currentMode = MainManager.Mode.Building;
         }
     }
 
@@ -83,7 +79,6 @@ public class MenuManager : Singleton<MenuManager>
             }
         }
 
-        MainManager.Instance.CurrentMode = MainManager.Mode.Building;
+        MainManager.Instance.currentMode = MainManager.Mode.Building;
     }
-
 }
