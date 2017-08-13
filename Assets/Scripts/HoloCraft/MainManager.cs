@@ -50,8 +50,8 @@ public class MainManager : Singleton<MainManager>
     {
         if (currentMode == Mode.Placing)
         {
-            currentPlayingObject.transform.position = GazeManager.Instance.HitPosition + new Vector3(0, 0.5f, 0);
-            if (CInput.aUp)
+            currentPlayingObject.transform.position = GazeManager.Instance.HitPosition + new Vector3(0, 0.2f, 0);
+            if (CInput.GetSubmitKey())
                 ValidatePosition();
         }
     }
@@ -105,7 +105,7 @@ public class MainManager : Singleton<MainManager>
         currentMode = Mode.Playing;
         creator.StopCreation();
 
-        currentPlayingObject = new GameObject().transform;
+        currentPlayingObject = new GameObject("CurrentPlayingObject").transform;
         currentPlayingObject.transform.rotation = workspaceHolder.transform.rotation;
         currentPlayingObject.transform.position = workspaceHolder.transform.position;
         currentPlayingObject.transform.localScale = workspaceHolder.transform.localScale;
@@ -151,6 +151,7 @@ public class MainManager : Singleton<MainManager>
 
     public void SaveData()
     {
+        creation.creationName = Utility.GenerateName("Creation");
         creation.AddToCreationsList(creationsList);
         Utility.SerializeFile(CreationsListFilename, creationsList);
     }
@@ -172,17 +173,20 @@ public class MainManager : Singleton<MainManager>
             GameObject toInstantiate = listOfBlocks.Find(block => block.blockType == item.type).prefab;
             toInstantiate = Instantiate(toInstantiate, workspaceHolder.transform);
             Vector3 position = new Vector3(item.posX, item.posY, item.posZ);
+            Quaternion rotation = Quaternion.Euler(item.rotX, item.rotY, item.rotZ);
             toInstantiate.transform.localPosition = position;
+            toInstantiate.transform.localRotation = rotation;
             creator.Validate(position, toInstantiate);
         }
+        Debug.Log(creation.creationDict);
     }
 
     public void RepositionCurrentCreation()
     {
-        foreach (var item in creation.creationDict)
+        foreach (Transform item in currentPlayingObject)
         {
-            item.Value.GetComponent<Rigidbody>().isKinematic = true;
-            item.Value.transform.localPosition = item.Key;
+            item.GetComponent<Rigidbody>().isKinematic = true;
+            item.GetComponent<Block>().ResetCreationState();
         }
         currentMode = Mode.Placing;
     }
@@ -199,26 +203,17 @@ public class MainManager : Singleton<MainManager>
 
     public void ReloadCurrentCreation()
     {
-        Destroy(currentPlayingObject.gameObject);
-        workspaceController.gameObject.SetActive(true);
-        PopulateFromDict();
-        creator.PlaceNext();
-        currentMode = Mode.Building;
-    }
-
-    public void PopulateFromDict()
-    {
-        Dictionary<Vector3, Block> tempDict = new Dictionary<Vector3, Block>();
-        foreach (var item in creation.creationDict)
-            tempDict.Add(item.Key, item.Value);
-
-        creation.creationDict.Clear();
-        foreach (var item in tempDict)
+        foreach (Block block in currentPlayingObject.GetComponentsInChildren<Block>())
         {
-            Block block = Instantiate(item.Value, workspaceHolder.transform);
+            workspaceController.gameObject.SetActive(true);
             block.DisablePhysics();
+            block.transform.SetParent(workspaceHolder.transform);
             block.ResetCreationState();
-            creator.Validate(block.position, block.gameObject);
         }
+
+        Destroy(currentPlayingObject.gameObject);
+        currentMode = Mode.Building;
+        creator.SetCurrentNbrObjects();
+        creator.PlaceNext();
     }
 }

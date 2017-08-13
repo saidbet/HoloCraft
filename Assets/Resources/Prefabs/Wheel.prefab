@@ -118,7 +118,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1662570185996376}
-  m_LocalRotation: {x: -0.0031944818, y: -0.0032150229, z: -0.0032150229, w: 0.99998456}
+  m_LocalRotation: {x: -0.003194482, y: -0.0032150233, z: -0.0032150233, w: 0.99998456}
   m_LocalPosition: {x: 1, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -282,6 +282,8 @@ MonoBehaviour:
   renderers: []
   materials: []
   defaultColors: []
+  position: {x: 0, y: 0, z: 0}
+  rotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &114138715559246094
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -354,11 +356,11 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.7999999
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 10
   m_SidewaysFriction:
     m_ExtremumSlip: 0.19999999
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 1
+    m_Stiffness: 10
   m_Enabled: 1

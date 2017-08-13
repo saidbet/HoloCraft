@@ -13,7 +13,7 @@ public class WorkspaceController : MonoBehaviour
         if (MainManager.Instance.currentMode == MainManager.Mode.Building)
         {
             direction = CInput.GetRightAxisDirection();
-            if(direction != Direction.None)
+            if (direction != Direction.None)
             {
                 RotateWorkspace(direction);
             }
@@ -115,9 +115,9 @@ public class WorkspaceController : MonoBehaviour
     private void ScaleWorkspace(Direction direction)
     {
         if (direction == Direction.Up)
-            transform.localScale += new Vector3(0.1f, 0.1f, 0.1f);
+            workspaceHolder.transform.localScale += new Vector3(0.01f, 0.01f, 0.01f);
         else if (direction == Direction.Down)
-            transform.localScale -= new Vector3(0.1f, 0.1f, 0.1f);
+            workspaceHolder.transform.localScale -= new Vector3(0.01f, 0.01f, 0.01f);
     }
 
     private void Validate()
@@ -132,7 +132,7 @@ public class WorkspaceController : MonoBehaviour
 
     public void CleanUpWorkspace()
     {
-        foreach(Transform child in workspaceHolder.transform)
+        foreach (Transform child in workspaceHolder.transform)
         {
             if (child.gameObject != workspaceVisual)
                 Destroy(child.gameObject);

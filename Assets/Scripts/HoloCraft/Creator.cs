@@ -253,4 +253,9 @@ public class Creator : MonoBehaviour
         nbrObjects = 0;
         currentPosition = initialPosition;
     }
+
+    public void SetCurrentNbrObjects()
+    {
+        nbrObjects = workspaceHolder.transform.childCount - 1;
+    }
 }

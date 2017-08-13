@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -116,8 +115,8 @@ public class CreationData
 
     public BlockData[] savedBlocks;
 
-	public CreationData(Creation creation)
-	{
+    public CreationData(Creation creation)
+    {
         this.creationName = creation.creationName;
 
         maxHeight = creation.maxHeight;
@@ -142,6 +141,10 @@ public class CreationData
             savedBlocks[index].posX = item.Key.x;
             savedBlocks[index].posY = item.Key.y;
             savedBlocks[index].posZ = item.Key.z;
+
+            savedBlocks[index].rotX = item.Value.rotation.eulerAngles.x;
+            savedBlocks[index].rotY = item.Value.rotation.eulerAngles.y;
+            savedBlocks[index].rotZ = item.Value.rotation.eulerAngles.z;
 
             savedBlocks[index].type = item.Value.type.blockType;
             index++;
