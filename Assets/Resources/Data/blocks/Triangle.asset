@@ -16,4 +16,4 @@ MonoBehaviour:
   thumbnail: {fileID: 21300000, guid: a4868c065db873b4393e47b33956fab2, type: 3}
   properties:
   - property: 0
-    value: 20
+    value: 10

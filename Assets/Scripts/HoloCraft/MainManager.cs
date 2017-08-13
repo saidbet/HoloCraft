@@ -1,9 +1,7 @@
-﻿using HoloToolkit.Sharing.Spawning;
-using HoloToolkit.Unity;
+﻿using HoloToolkit.Unity;
+using HoloToolkit.Unity.InputModule;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
 using UnityEngine;
 
 public class MainManager : Singleton<MainManager>
@@ -14,7 +12,8 @@ public class MainManager : Singleton<MainManager>
         InMenu,
         Moving,
         Scaling,
-        Playing
+        Playing,
+        Placing
     }
 
     public GameObject workspacePrefab;
@@ -45,6 +44,16 @@ public class MainManager : Singleton<MainManager>
         listOfBlocks.AddRange(blockArray.array);
         InitCreationsList();
         StartCreator();
+    }
+
+    private void Update()
+    {
+        if (currentMode == Mode.Placing)
+        {
+            currentPlayingObject.transform.position = GazeManager.Instance.HitPosition + new Vector3(0, 0.5f, 0);
+            if (CInput.aUp)
+                ValidatePosition();
+        }
     }
 
     private void InitCreationsList()
@@ -105,17 +114,15 @@ public class MainManager : Singleton<MainManager>
         {
 
             blk.Value.transform.SetParent(currentPlayingObject.transform);
-
             JointToAdjacents(blk.Key, blk.Value.gameObject);
-
-            blk.Value.GetComponent<Rigidbody>().isKinematic = false;
             IPlayable playable = blk.Value.GetComponent<IPlayable>();
+            blk.Value.EnablePhysics();
 
             if (playable != null)
                 playable.Startplay();
         }
 
-        Destroy(workspaceController.gameObject);
+        workspaceController.gameObject.SetActive(false);
     }
 
     private void JointToAdjacents(Vector3 position, GameObject currentBlock)
@@ -172,12 +179,46 @@ public class MainManager : Singleton<MainManager>
 
     public void RepositionCurrentCreation()
     {
-        currentPlayingObject.position = Camera.main.transform.position + Camera.main.transform.forward*1.5f;
-
         foreach (var item in creation.creationDict)
         {
-            item.Value.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            item.Value.GetComponent<Rigidbody>().isKinematic = true;
             item.Value.transform.localPosition = item.Key;
+        }
+        currentMode = Mode.Placing;
+    }
+
+    public void ValidatePosition()
+    {
+        foreach (var item in creation.creationDict)
+        {
+            item.Value.GetComponent<Rigidbody>().isKinematic = false;
+        }
+
+        currentMode = Mode.Playing;
+    }
+
+    public void ReloadCurrentCreation()
+    {
+        Destroy(currentPlayingObject.gameObject);
+        workspaceController.gameObject.SetActive(true);
+        PopulateFromDict();
+        creator.PlaceNext();
+        currentMode = Mode.Building;
+    }
+
+    public void PopulateFromDict()
+    {
+        Dictionary<Vector3, Block> tempDict = new Dictionary<Vector3, Block>();
+        foreach (var item in creation.creationDict)
+            tempDict.Add(item.Key, item.Value);
+
+        creation.creationDict.Clear();
+        foreach (var item in tempDict)
+        {
+            Block block = Instantiate(item.Value, workspaceHolder.transform);
+            block.DisablePhysics();
+            block.ResetCreationState();
+            creator.Validate(block.position, block.gameObject);
         }
     }
 }

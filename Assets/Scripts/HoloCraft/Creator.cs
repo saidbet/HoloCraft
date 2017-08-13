@@ -1,6 +1,4 @@
 ﻿using HoloToolkit.Sharing.Spawning;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Creator : MonoBehaviour
@@ -225,8 +223,7 @@ public class Creator : MonoBehaviour
         nbrObjects++;
         previousRot = block.transform.localRotation;
         creation.AddBlock(position, block.GetComponent<Block>());
-        block.GetComponent<Block>().RestoreDefaultColor();
-        block.GetComponent<Block>().DisableSnapPoints();
+        block.GetComponent<Block>().Validate();
         currentObject = null;
     }
 

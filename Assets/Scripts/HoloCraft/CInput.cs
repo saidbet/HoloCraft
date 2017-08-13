@@ -1,13 +1,10 @@
-﻿using HoloToolkit.Unity;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class CInput
 {
     public enum Key
     {
-        A,B,X,Y,RB,LB,Back,Start,R3,L3
+        A, B, X, Y, RB, LB, Back, Start, R3, L3
     }
 
     public static bool aDown;
@@ -220,6 +217,8 @@ public static class CInput
         }
         else
             dpadUsed = false;
+
+        return Direction.None;
 #endif
     }
 
@@ -227,7 +226,7 @@ public static class CInput
     {
         bool returnValue;
 
-        if(timer < 0)
+        if (timer < 0)
         {
             switch (key)
             {

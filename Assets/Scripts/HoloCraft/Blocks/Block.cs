@@ -7,10 +7,11 @@ public class Block : MonoBehaviour
 {
     public BlockType type;
     public SnapPoint[] snapPoints;
-
     public Renderer[] renderers;
     public List<Material> materials;
     public List<Color> defaultColors;
+    public Vector3 position;
+    public Quaternion rotation;
 
     private void Awake()
     {
@@ -22,12 +23,15 @@ public class Block : MonoBehaviour
         GetComponent<BlockPropertiesValues>().CreateProperties();
     }
 
-    public void DisableSnapPoints()
+    public void ToggleSnapPoints(bool state)
     {
         foreach (SnapPoint snap in snapPoints)
         {
-            Destroy(snap.GetComponent<Rigidbody>());
-            Destroy(snap);
+            snap.enabled = state;
+            if (state == false)
+                Destroy(snap.GetComponent<Rigidbody>());
+            else
+                snap.gameObject.AddComponent<Rigidbody>();
         }
     }
 
@@ -83,6 +87,35 @@ public class Block : MonoBehaviour
         for (int i = 0; i < renderers.Length; i++)
         {
             renderers[i].enabled = true;
+        }
+    }
+
+    public void Validate()
+    {
+        position = this.transform.localPosition;
+        rotation = this.transform.localRotation;
+        RestoreDefaultColor();
+        ToggleSnapPoints(false);
+    }
+
+    public void ResetCreationState()
+    {
+        this.transform.localPosition = position;
+        this.transform.localRotation = rotation;
+        this.transform.localScale = Vector3.one;
+    }
+
+    public void EnablePhysics()
+    {
+        GetComponent<Rigidbody>().isKinematic = false;
+    }
+
+    public void DisablePhysics()
+    {
+        GetComponent<Rigidbody>().isKinematic = true;
+        foreach (FixedJoint joint in GetComponents<FixedJoint>())
+        {
+            Destroy(joint);
         }
     }
 }
