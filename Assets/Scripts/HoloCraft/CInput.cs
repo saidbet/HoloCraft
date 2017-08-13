@@ -5,6 +5,11 @@ using UnityEngine;
 
 public static class CInput
 {
+    public enum Key
+    {
+        A,B,X,Y,RB,LB,Back,Start,R3,L3
+    }
+
     public static bool aDown;
     public static bool bDown;
     public static bool xDown;
@@ -26,14 +31,25 @@ public static class CInput
     public static bool rbUp;
     public static bool lbUp;
 
-    public static bool back;
-    public static bool start;
+    public static bool backDown;
+    public static bool startDown;
+
+    public static bool backUp;
+    public static bool startUp;
 
     public static float dpadX;
     public static float dpadY;
 
-    public static bool rightStick;
-    public static bool leftStick;
+    public static bool dpadUp;
+    public static bool dpadDown;
+    public static bool dpadLeft;
+    public static bool dpadRight;
+
+    public static bool rightStickDown;
+    public static bool leftStickDown;
+
+    public static bool rightStickUp;
+    public static bool leftStickUp;
 
     public static float leftStickX;
     public static float leftStickY;
@@ -47,6 +63,8 @@ public static class CInput
     public static bool leftStickUsed;
     public static bool rightStickUsed;
     public static bool dpadUsed;
+
+    public static float timer;
 
     public static Direction GetRightAxisDirection()
     {
@@ -130,6 +148,7 @@ public static class CInput
 
     public static Direction GetDpadDirection()
     {
+#if UNITY_EDITOR
         if (dpadY == 1)
         {
             if (!dpadUsed)
@@ -166,5 +185,150 @@ public static class CInput
             dpadUsed = false;
 
         return Direction.None;
+#elif UNITY_WSA
+        if (dpadUp)
+        {
+            if (!dpadUsed)
+            {
+                dpadUsed = true;
+                return Direction.Up;
+            }
+        }
+        else if (dpadDown)
+        {
+            if (!dpadUsed)
+            {
+                dpadUsed = true;
+                return Direction.Down;
+            }
+        }
+        else if (dpadRight)
+        {
+            if (!dpadUsed)
+            {
+                dpadUsed = true;
+                return Direction.Right;
+            }
+        }
+        else if (dpadLeft)
+        {
+            if (!dpadUsed)
+            {
+                dpadUsed = true;
+                return Direction.Left;
+            }
+        }
+        else
+            dpadUsed = false;
+#endif
+    }
+
+    public static bool GetKeyDown(Key key)
+    {
+        bool returnValue;
+
+        if(timer < 0)
+        {
+            switch (key)
+            {
+                case Key.A:
+                    returnValue = aDown;
+                    break;
+                case Key.B:
+                    returnValue = bDown;
+                    break;
+                case Key.X:
+                    returnValue = xDown;
+                    break;
+                case Key.Y:
+                    returnValue = yDown;
+                    break;
+                case Key.Back:
+                    returnValue = backDown;
+                    break;
+                case Key.Start:
+                    returnValue = startDown;
+                    break;
+                case Key.R3:
+                    returnValue = rightStickDown;
+                    break;
+                case Key.L3:
+                    returnValue = leftStickDown;
+                    break;
+                case Key.RB:
+                    returnValue = rbDown;
+                    break;
+                case Key.LB:
+                    returnValue = lbDown;
+                    break;
+                default:
+                    return false;
+            }
+            if (returnValue == true)
+                timer = 0.5f;
+        }
+        else
+        {
+            timer -= Time.deltaTime;
+            returnValue = false;
+        }
+        return returnValue;
+    }
+
+    public static bool GetKeyUp(Key key)
+    {
+        bool returnValue;
+
+        if (timer < 0)
+        {
+            switch (key)
+            {
+                case Key.A:
+                    returnValue = aUp;
+                    break;
+                case Key.B:
+                    returnValue = bUp;
+                    break;
+                case Key.X:
+                    returnValue = xUp;
+                    break;
+                case Key.Y:
+                    returnValue = yUp;
+                    break;
+                case Key.Back:
+                    returnValue = backUp;
+                    break;
+                case Key.Start:
+                    returnValue = startUp;
+                    break;
+                case Key.R3:
+                    returnValue = rightStickUp;
+                    break;
+                case Key.L3:
+                    returnValue = leftStickUp;
+                    break;
+                case Key.RB:
+                    returnValue = rbUp;
+                    break;
+                case Key.LB:
+                    returnValue = lbUp;
+                    break;
+                default:
+                    return false;
+            }
+            if (returnValue == true)
+                timer = 0.5f;
+        }
+        else
+        {
+            timer -= Time.deltaTime;
+            returnValue = false;
+        }
+        return returnValue;
+    }
+
+    public static bool GetSubmitKey()
+    {
+        return GetKeyUp(Key.A);
     }
 }

@@ -10,6 +10,6 @@ public class LoadCreationOnSubmit : EventTrigger {
     public override void OnSubmit(BaseEventData eventData)
     {
         MainManager.Instance.LoadCreation(creationName);
-		MenuManager.Instance.ToggleMenu (MenuManager.Instance.LoadingMenu);
+		GetComponentInParent<Menu>().HideMenu();
     }
 }

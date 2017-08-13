@@ -48,12 +48,14 @@ public class PropertyHolder : MonoBehaviour
 
     public void OnToggleChange()
     {
-        if (toggle.isOn == true)
+        if (toggle.isOn == false)
         {
+            toggle.isOn = true;
             currentProperty.value = 1;
         }
         else
         {
+            toggle.isOn = false;
             currentProperty.value = 0;
         }
     }

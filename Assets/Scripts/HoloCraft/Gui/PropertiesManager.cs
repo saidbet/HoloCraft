@@ -6,8 +6,6 @@ using UnityEngine.UI;
 public class PropertiesManager : Menu
 {
     public List<PropertyPrefab> propertiesPrefabs;
-    public Selectable[] selectables;
-    public int currentIndex;
 
     protected override void OnEnable()
     {
@@ -24,11 +22,13 @@ public class PropertiesManager : Menu
         base.OnEnable();
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
         foreach (Transform child in transform)
         {
             Destroy(child.gameObject);
         }
+
+        base.OnDisable();
     }
 }

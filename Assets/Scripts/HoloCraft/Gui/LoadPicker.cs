@@ -26,8 +26,10 @@ public class LoadPicker : Menu
         base.OnEnable();
     }
 
-    public void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
+
         foreach (GameObject go in guiElements)
         {
             Destroy(go);

@@ -17,10 +17,6 @@ public class InputHandler : MonoBehaviour
     {
         controllerInput.Update();
 
-#if UNITY_WSA
-
-#endif
-
 #if UNITY_EDITOR
         CInput.aDown = Input.GetKeyDown(KeyCode.JoystickButton0);
         CInput.aUp = Input.GetKeyUp(KeyCode.JoystickButton0);
@@ -44,13 +40,17 @@ public class InputHandler : MonoBehaviour
         CInput.rbDown = Input.GetKeyDown(KeyCode.JoystickButton5);
         CInput.rbUp = Input.GetKeyUp(KeyCode.JoystickButton5);
 
-        CInput.back = Input.GetKeyDown(KeyCode.JoystickButton6);
+        CInput.backDown = Input.GetKeyDown(KeyCode.JoystickButton6);
+        CInput.backUp = Input.GetKeyUp(KeyCode.JoystickButton6);
 
-        CInput.start = Input.GetKeyDown(KeyCode.JoystickButton7);
+        CInput.startDown = Input.GetKeyDown(KeyCode.JoystickButton7);
+        CInput.startUp = Input.GetKeyUp(KeyCode.JoystickButton7);
 
-        CInput.leftStick = Input.GetKeyDown(KeyCode.JoystickButton8);
+        CInput.leftStickDown = Input.GetKeyDown(KeyCode.JoystickButton8);
+        CInput.leftStickUp = Input.GetKeyUp(KeyCode.JoystickButton8);
 
-        CInput.rightStick = Input.GetKeyDown(KeyCode.JoystickButton9);
+        CInput.rightStickDown = Input.GetKeyDown(KeyCode.JoystickButton9);
+        CInput.rightStickUp = Input.GetKeyUp(KeyCode.JoystickButton9);
 
         CInput.leftStickX = Input.GetAxis("LeftStickHoriz");
         CInput.leftStickY = Input.GetAxis("LeftStickVert");
@@ -63,6 +63,56 @@ public class InputHandler : MonoBehaviour
 
         CInput.leftTrigger = Input.GetAxis("LeftTrigger");
         CInput.rightTrigger = Input.GetAxis("RightTrigger");
+
+#elif UNITY_WSA
+        CInput.aDown = controllerInput.GetButtonDown(ControllerButton.A);
+        CInput.aUp = controllerInput.GetButtonUp(ControllerButton.A);
+        CInput.aHold = controllerInput.GetButton(ControllerButton.A);
+
+        CInput.bDown = controllerInput.GetButtonDown(ControllerButton.B);
+        CInput.bUp = controllerInput.GetButtonUp(ControllerButton.B);
+        CInput.bHold = controllerInput.GetButton(ControllerButton.B);
+
+        CInput.xDown = controllerInput.GetButtonDown(ControllerButton.X);
+        CInput.xUp = controllerInput.GetButtonUp(ControllerButton.X);
+        CInput.xHold = controllerInput.GetButton(ControllerButton.X);
+
+        CInput.yDown = controllerInput.GetButtonDown(ControllerButton.Y);
+        CInput.yUp = controllerInput.GetButtonUp(ControllerButton.Y);
+        CInput.yHold = controllerInput.GetButton(ControllerButton.Y);
+
+        CInput.lbDown = controllerInput.GetButtonDown(ControllerButton.LeftShoulder);
+        CInput.lbUp = controllerInput.GetButtonUp(ControllerButton.LeftShoulder);
+
+        CInput.rbDown = controllerInput.GetButtonDown(ControllerButton.RightShoulder);
+        CInput.rbUp = controllerInput.GetButtonUp(ControllerButton.RightShoulder);
+
+        CInput.backDown = controllerInput.GetButtonDown(ControllerButton.View);
+        CInput.backUp = controllerInput.GetButtonUp(ControllerButton.View);
+
+        CInput.startDown = controllerInput.GetButtonDown(ControllerButton.Menu);
+        CInput.startUp = controllerInput.GetButtonUp(ControllerButton.Menu);
+
+        CInput.leftStickDown = controllerInput.GetButtonDown(ControllerButton.LeftThumbstick);
+        CInput.leftStickUp = controllerInput.GetButtonUp(ControllerButton.LeftThumbstick);
+
+        CInput.rightStickDown = controllerInput.GetButtonDown(ControllerButton.RightThumbstick);
+        CInput.rightStickUp = controllerInput.GetButtonUp(ControllerButton.RightThumbstick);
+
+        CInput.leftStickX = controllerInput.GetAxisLeftThumbstickX();
+        CInput.leftStickY = controllerInput.GetAxisLeftThumbstickY();
+
+        CInput.rightStickX = controllerInput.GetAxisRightThumbstickX();
+        CInput.rightStickY = controllerInput.GetAxisRightThumbstickY();
+
+        CInput.dpadUp = controllerInput.GetButton(ControllerButton.DPadUp);
+        CInput.dpadDown = controllerInput.GetButton(ControllerButton.DPadDown);
+        CInput.dpadLeft = controllerInput.GetButton(ControllerButton.DPadLeft);
+        CInput.dpadRight = controllerInput.GetButton(ControllerButton.DPadRight);
+
+        CInput.leftTrigger = controllerInput.GetAxisLeftTrigger();
+        CInput.rightTrigger = controllerInput.GetAxisRightTrigger();
 #endif
+
     }
 }

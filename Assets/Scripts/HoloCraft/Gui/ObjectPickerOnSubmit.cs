@@ -10,6 +10,6 @@ public class ObjectPickerOnSubmit : EventTrigger {
     public override void OnSubmit(BaseEventData eventData)
     {
         MainManager.Instance.creator.ChangeObject(blockType.prefab);
-        MenuManager.Instance.ToggleMenu(MenuManager.Instance.objectPicker);
+        GetComponentInParent<Menu>().HideMenu();
     }
 }

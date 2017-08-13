@@ -7,7 +7,6 @@ public class Creator : MonoBehaviour
 {
     public GameObject objectToPlace;
     private Block currentObject;
-    public Block firstBlock;
 
     public Block _hoveredObject;
 
@@ -35,9 +34,12 @@ public class Creator : MonoBehaviour
     }
 
     //Position and rotation informations
+    private Vector3 initialPosition;
     private Vector3 currentPosition;
     private Quaternion previousRot;
     private Direction direction;
+
+    private int nbrObjects;
 
     private bool _isValid;
 
@@ -86,23 +88,28 @@ public class Creator : MonoBehaviour
         }
         if (CInput.bDown)
         {
-            if (_hoveredObject != null && HoveredObject != firstBlock)
+            if (_hoveredObject != null)
             {
-                creation.RemoveBlock(HoveredObject.transform.localPosition);
+                RemoveBlock();
                 PlaceNext();
             }
         }
     }
 
-    public void StartPlacing(Vector3 initialPos, Creation creation, GameObject workspaceHolder)
+    public void Initialize(Vector3 initialPos, Creation creation, GameObject workspaceHolder)
     {
         this.creation = creation;
         this.workspaceHolder = workspaceHolder;
-        this.currentPosition = initialPos;
+        this.initialPosition = initialPos;
+        StartPlacing();
+    }
 
-        firstBlock = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspaceHolder).GetComponent<Block>();
-        firstBlock.transform.localPosition = currentPosition;
-        Validate(currentPosition, firstBlock.gameObject);
+    public void StartPlacing()
+    {
+        currentPosition = initialPosition;
+        currentObject = ShareManager.Instance.spawnManager.Spawn(new SyncSpawnedObject(), objectToPlace, 0, "", workspaceHolder).GetComponent<Block>();
+        currentObject.transform.localPosition = currentPosition;
+        Validate(currentPosition, currentObject.gameObject);
 
         PlaceNext();
         Translate(Direction.Up);
@@ -196,8 +203,13 @@ public class Creator : MonoBehaviour
 
     private void CheckValid()
     {
-        IsValid = false;
-        HoveredObject = creation.GetBlock(currentPosition);
+        if (nbrObjects == 0)
+            IsValid = true;
+        else
+        {
+            IsValid = false;
+            HoveredObject = creation.GetBlock(currentPosition);
+        }
     }
 
     public void ChangeObject(GameObject newObject)
@@ -210,6 +222,7 @@ public class Creator : MonoBehaviour
 
     public void Validate(Vector3 position, GameObject block)
     {
+        nbrObjects++;
         previousRot = block.transform.localRotation;
         creation.AddBlock(position, block.GetComponent<Block>());
         block.GetComponent<Block>().RestoreDefaultColor();
@@ -230,5 +243,17 @@ public class Creator : MonoBehaviour
         Destroy(currentObject.gameObject);
         if (HoveredObject != null)
             HoveredObject.RestoreDefaultColor();
+    }
+
+    public void RemoveBlock()
+    {
+        creation.RemoveBlock(HoveredObject.transform.localPosition);
+        nbrObjects--;
+    }
+
+    public void CleanUpWorkspace()
+    {
+        nbrObjects = 0;
+        currentPosition = initialPosition;
     }
 }

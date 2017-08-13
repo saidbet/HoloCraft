@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,22 +10,46 @@ public class Menu : MonoBehaviour
     private Direction direction;
     public Selectable[] selectables;
     public int nbrElementsPerLine;
-    public int elementSize;
+    public int nbrSelectablePerline;
+    public float elementSizeVert;
+    public float elementSizeHoriz;
     public int currentIndex;
+
+    public CInput.Key toggleKey;
+
+    public MainManager.Mode previousMode;
 
     private void Update()
     {
         direction = CInput.GetDpadDirection();
         if (direction != Direction.None)
             MoveSelection(direction);
+
+        if (CInput.GetSubmitKey())
+            Submit();
+
+        if (CInput.GetKeyUp(CInput.Key.B) || CInput.GetKeyUp(toggleKey))
+            HideMenu();
+    }
+
+    public void HideMenu()
+    {
+        gameObject.SetActive(false);
     }
 
     protected virtual void OnEnable()
     {
-        currentIndex = 0;
         selectables = GetComponentsInChildren<Selectable>();
         EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(selectables[currentIndex].gameObject);
+        StartCoroutine(SetSelected());
+        previousMode = MainManager.Instance.currentMode;
+        MainManager.Instance.currentMode = MainManager.Mode.InMenu;
+    }
+
+    protected virtual void OnDisable()
+    {
+        if (MainManager.Instance.currentMode == MainManager.Mode.InMenu)
+            MainManager.Instance.currentMode = previousMode;
     }
 
     protected virtual void MoveSelection(Direction direction)
@@ -32,13 +57,13 @@ public class Menu : MonoBehaviour
         switch (direction)
         {
             case Direction.Down:
-                if ((currentIndex + nbrElementsPerLine) < selectables.Length)
-                    currentIndex += nbrElementsPerLine;
+                if ((currentIndex + nbrSelectablePerline) < selectables.Length)
+                    currentIndex += nbrSelectablePerline;
                 break;
 
             case Direction.Up:
-                if (currentIndex >= nbrElementsPerLine)
-                    currentIndex -= nbrElementsPerLine;
+                if (currentIndex >= nbrSelectablePerline)
+                    currentIndex -= nbrSelectablePerline;
                 break;
 
             case Direction.Right:
@@ -61,6 +86,17 @@ public class Menu : MonoBehaviour
 
         int y = index / nbrElementsPerLine;
 
-        return new Vector2(x * elementSize, -y * elementSize);
+        return new Vector2(x * elementSizeHoriz, -y * elementSizeVert);
+    }
+
+    public void Submit()
+    {
+        EventSystem.current.currentSelectedGameObject.GetComponent<EventTrigger>().OnSubmit(new BaseEventData(EventSystem.current));
+    }
+
+    IEnumerator SetSelected()
+    {
+        yield return new WaitForEndOfFrame();
+        EventSystem.current.SetSelectedGameObject(selectables[currentIndex].gameObject);
     }
 }

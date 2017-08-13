@@ -7,7 +7,7 @@ public class test : MonoBehaviour
 
     private void Update()
     {
-        if (CInput.rightStick)
+        if (CInput.rightStickUp)
             plane.SetActive(!plane.activeSelf);
     }
 }

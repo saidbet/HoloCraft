@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayModeMenu : MonoBehaviour
+public class PlayModeMenu : Menu
 {
     public void RepositionActiveCreation()
     {
-
+        MainManager.Instance.RepositionCurrentCreation();
+        GetComponentInParent<Menu>().HideMenu();
     }
 }

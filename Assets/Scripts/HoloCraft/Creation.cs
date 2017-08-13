@@ -77,16 +77,6 @@ public class Creation
         list.AddCreation(data);
     }
 
-    public void CleanUpWorkspace()
-    {
-        foreach (var item in creationDict)
-        {
-            ShareManager.Instance.spawnManager.Delete(item.Value.gameObject);
-        }
-
-        creationDict = new Dictionary<Vector3, Block>();
-    }
-
     public void SetUpFromLoadData(CreationData data)
     {
         maxHeight = data.maxHeight;
@@ -95,7 +85,22 @@ public class Creation
 
         creationName = data.creationName;
         date = data.date;
+        creationDict.Clear();
     }
+}
+
+[Serializable]
+public struct BlockData
+{
+    //Position
+    public float posX;
+    public float posY;
+    public float posZ;
+    //Rotation
+    public float rotX;
+    public float rotY;
+    public float rotZ;
+    public BlockType.BlockTypes type;
 }
 
 [Serializable]
@@ -142,15 +147,6 @@ public class CreationData
             index++;
         }
     }
-}
-
-[Serializable]
-public struct BlockData
-{
-    public float posX;
-    public float posY;
-    public float posZ;
-    public BlockType.BlockTypes type;
 }
 
 [XmlRoot("CreationList"), Serializable]

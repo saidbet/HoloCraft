@@ -18,7 +18,7 @@ public class WorkspaceController : MonoBehaviour
                 RotateWorkspace(direction);
             }
 
-            if (CInput.rightStick)
+            if (CInput.rightStickUp)
                 ResetRotation();
         }
 
@@ -30,7 +30,7 @@ public class WorkspaceController : MonoBehaviour
                 MoveWorkspace(direction);
             }
 
-            if (CInput.leftStick)
+            if (CInput.leftStickUp)
                 ResetPosition();
 
             if (CInput.yDown)
@@ -39,7 +39,7 @@ public class WorkspaceController : MonoBehaviour
             if (CInput.xDown)
                 MoveWorkspace(Direction.Backward);
 
-            if (CInput.aDown)
+            if (CInput.GetSubmitKey())
                 MainManager.Instance.currentMode = MainManager.Mode.Building;
         }
 
@@ -51,7 +51,7 @@ public class WorkspaceController : MonoBehaviour
                 ScaleWorkspace(direction);
             }
 
-            if (CInput.aUp)
+            if (CInput.GetSubmitKey())
                 MainManager.Instance.currentMode = MainManager.Mode.Building;
         }
     }
@@ -128,5 +128,14 @@ public class WorkspaceController : MonoBehaviour
     public void ToggleVisual(bool state)
     {
         workspaceVisual.SetActive(state);
+    }
+
+    public void CleanUpWorkspace()
+    {
+        foreach(Transform child in workspaceHolder.transform)
+        {
+            if (child.gameObject != workspaceVisual)
+                Destroy(child.gameObject);
+        }
     }
 }

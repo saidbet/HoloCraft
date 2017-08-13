@@ -249,7 +249,9 @@ MonoBehaviour:
   minButton: {fileID: 1000614547732092}
   input: {fileID: 114520721711896522}
   currentObject: {fileID: 0}
-  currentProperty: {fileID: 0}
+  currentProperty:
+    property: 0
+    value: 0
 --- !u!114 &114337549297689658
 MonoBehaviour:
   m_ObjectHideFlags: 1

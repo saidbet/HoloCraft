@@ -33,6 +33,8 @@ public class MainManager : Singleton<MainManager>
     public BlocksArray blockArray;
     private List<BlockType> listOfBlocks = new List<BlockType>();
 
+    public Transform currentPlayingObject;
+
     //Current mode
     public Mode currentMode;
 
@@ -80,7 +82,7 @@ public class MainManager : Singleton<MainManager>
 
         workspaceHolder = workspaceController.workspaceHolder;
         Vector3 initialPos = new Vector3(creation.maxWidth / 2, creation.maxHeight / 2, creation.maxDepth / 2);
-        creator.StartPlacing(initialPos, creation, workspaceHolder);
+        creator.Initialize(initialPos, creation, workspaceHolder);
     }
 
     private void StartCreator()
@@ -94,13 +96,15 @@ public class MainManager : Singleton<MainManager>
         currentMode = Mode.Playing;
         creator.StopCreation();
 
-        Transform parent = new GameObject().transform;
-        parent.localScale = workspaceHolder.transform.localScale;
+        currentPlayingObject = new GameObject().transform;
+        currentPlayingObject.transform.rotation = workspaceHolder.transform.rotation;
+        currentPlayingObject.transform.position = workspaceHolder.transform.position;
+        currentPlayingObject.transform.localScale = workspaceHolder.transform.localScale;
 
         foreach (var blk in creation.creationDict)
         {
 
-            blk.Value.transform.SetParent(parent.transform);
+            blk.Value.transform.SetParent(currentPlayingObject.transform);
 
             JointToAdjacents(blk.Key, blk.Value.gameObject);
 
@@ -147,9 +151,11 @@ public class MainManager : Singleton<MainManager>
     public void LoadCreation(string name)
     {
         CreationData creationToLoad = creationsList.creations.Find(data => data.creationName == name);
-        creation.CleanUpWorkspace();
+        workspaceController.CleanUpWorkspace();
+        creator.CleanUpWorkspace();
         creation.SetUpFromLoadData(creationToLoad);
         PopulateWorkspace(creationToLoad.savedBlocks);
+        creator.PlaceNext();
     }
 
     private void PopulateWorkspace(BlockData[] data)
@@ -162,6 +168,16 @@ public class MainManager : Singleton<MainManager>
             toInstantiate.transform.localPosition = position;
             creator.Validate(position, toInstantiate);
         }
-        creator.PlaceNext();
+    }
+
+    public void RepositionCurrentCreation()
+    {
+        currentPlayingObject.position = Camera.main.transform.position + Camera.main.transform.forward*1.5f;
+
+        foreach (var item in creation.creationDict)
+        {
+            item.Value.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            item.Value.transform.localPosition = item.Key;
+        }
     }
 }

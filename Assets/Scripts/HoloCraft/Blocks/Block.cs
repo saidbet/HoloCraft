@@ -12,10 +12,14 @@ public class Block : MonoBehaviour
     public List<Material> materials;
     public List<Color> defaultColors;
 
+    private void Awake()
+    {
+        FindMats();
+    }
+
     private void Start()
     {
         GetComponent<BlockPropertiesValues>().CreateProperties();
-        FindMats();
     }
 
     public void DisableSnapPoints()
